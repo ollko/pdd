@@ -1,0 +1,18 @@
+
+
+.pdd-label{
+	font-weight: 400;
+}
+
+
+input[type="radio"]:checked + .pdd-label.right-ans.pdd-pass-question {
+    color: green;
+   }
+
+input[type="radio"] + .pdd-label.right-ans.pdd-pass-question {
+    color: green;
+   }
+
+input[type="radio"]:checked + .pdd-label.wrong-ans.pdd-pass-question {
+    color: red;
+   }

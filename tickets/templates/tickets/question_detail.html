@@ -1,0 +1,25 @@
+{% extends "base/__base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between">
+	<div>Билет №{{ question.ticket.id }}</div>
+	<div>Вопрос №{{ question.id }}</div>
+	<div>Время</div>
+</div>
+{% if question.image %}<img src="{{ question.image.url }}">{% endif %}
+<br>
+<p class="text-center"><strong>{{ question.question }}</strong></p>
+
+<form action="." class="pdd-choice-form" action="" >
+
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" value="{{ choice.id }}" />
+    <label class="pdd-label {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+{% endfor %}
+	<input class="btn btn-primary pdd-pass-button" type="button" value="Проверить">
+	<button type="submit" class="btn btn-primary pdd-next-button" style="display:none">Дальше</button>
+
+</form>
+
+{% endblock content %}

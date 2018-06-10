@@ -1,0 +1,14 @@
+{% extends "base/__base.html" %}
+
+{% block content %}
+
+	{% for ticket in tickets %}
+	<div class = 'row'>
+	{% if ticket.get_first_question_num %}
+		<div class="col-md-3 col-sm-6"><a href='{% url "tickets:question_detail"  ticket.get_first_question_num %}'>Билет № {{ ticket.tick_number }}</a></div>
+	
+	{% endif %}
+	</div>
+	{% endfor %}
+
+{% endblock content %}
