@@ -3,6 +3,35 @@
 from django.conf import settings
 from .models import Ticket, Question
 
+class Report(object):
+    def __init__(self, request):
+        self.session = request.session
+        report = self.session.get(settings.REPORT_SESSION_ID)
+        if not report:
+            # Сохраняем объект данных пользователя в сессию
+            report = self.session[settings.REPORT_SESSION_ID] = {}
+        self.report = report
+
+
+    def add_data(self, ticket_id, right, wrong):
+        self.report[ 'ticket_'+ticket_id ] = {}
+        self.report[ 'ticket_'+ticket_id ][ 'right' ] = right
+        self.report[ 'ticket_'+ticket_id ][ 'wrong' ] = wrong
+        print 'self.report=',self.report
+        self.save()
+
+    # Сохранение данных в сессию
+    def save(self):
+        self.session[settings.REPORT_SESSION_ID] = self.report
+        # Указываем, что сессия изменена
+        self.session.modified = True
+
+
+    def clear(self):
+        del self.session[settings.REPORT_SESSION_ID]
+        self.session.modified = True
+
+        
 class Stars(object):
     def __init__(self, request):
         self.session = request.session

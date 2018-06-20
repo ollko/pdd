@@ -18,7 +18,7 @@ from .models import (
     Theme,
     Choice,
     )
-from pass_data import Pdddata, Stars, Themedata
+from pass_data import Pdddata, Stars, Themedata, Report
 from generic.mixins import PddContextMixin
 
 
@@ -92,6 +92,7 @@ def pdddataAdd(request, pk):
      # pk - pk вопроса
     pdddata = Pdddata(request)
     stars = Stars(request)
+    report = Report(request)
     question = get_object_or_404( Question, pk = pk )
     question_id_list = question.get_question_id_list_in_ticket()
     if int(pk) == question_id_list[0]:
@@ -109,17 +110,29 @@ def pdddataAdd(request, pk):
     try:
         next_question_id = question_id_list[ question_id_list.index( int(pk) ) +1 ]
     except IndexError:
+        # пройдены все вопросы в билете:
+        # записываем число правильных/неправильных вопросов для отчета по билету
+        right, wrong = ( 0, 0 )
+        for item in stars.stars:
+            if item == 'green':
+                right += 1
+            else:
+                wrong += 1
+        ticket_id = str(question.ticket.id)
+        report.add_data(ticket_id, right, wrong)
         stars.clear()
-        return redirect( '/tickets/ticket_report?ticket_id=' + str(question.ticket.id) )
+        return redirect( '/tickets/ticket_report?ticket_id=' + ticket_id )
     return redirect('tickets:question_detail', str(next_question_id))
     
 
 
 def pdddataClear(request):
     pdddata = Pdddata(request)
-    pdddata.clear()
     stars = Stars(request)
+    report = Report(request)
+    pdddata.clear()
     stars.clear()
+    report.clear()
     return redirect('tickets:ticket_list')
 
 
@@ -129,19 +142,26 @@ class TicketReportView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TicketReportView, self).get_context_data(**kwargs)
+        report = Report(self.request)
         pdddata = Pdddata(self.request)
         ticket_id = self.request.GET['ticket_id']
+        ticket = get_object_or_404(Ticket, id = ticket_id)
+        
+        try:
+            one_ticket_report_data = report.report[ 'ticket_' + ticket_id ]
+        except KeyError:
+            raise Http404('Билет еще не пройден!')
+        context['ticket_number'] = ticket.tick_number
+        print 'one_ticket_report_data = ',one_ticket_report_data
+        context['right_ans'] = one_ticket_report_data[ 'right' ]
+        context['wrong_ans'] = one_ticket_report_data[ 'wrong' ]
+        
+        # данные для сводки правильный/неправильный ответ
         try:
             pdddata_one_ticket = pdddata.pdddata[ticket_id]
         except KeyError:
-            raise Http404() 
-        l = len(pdddata_one_ticket)
-        ticket = get_object_or_404(Ticket, id = ticket_id)
-        context['ticket_number'] = ticket.tick_number
-        context['wrong_ans'] = l
-        questions_num = len(ticket.questions.all())
-        context['right_ans'] = questions_num - l
-        # данные для сводки правильный/неправильный ответ
+            return context
+
         data = []
         for item in pdddata_one_ticket:
             d = {}
