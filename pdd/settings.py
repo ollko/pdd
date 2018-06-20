@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'tickets.context_processors.pdddata',
             ],
         },
     },
@@ -131,3 +132,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'uploads')
 
 PDD_SESSION_ID = 'pdd'
+
+STAR_SESSION_ID = 'stars'
+
+THEME_SESSION_ID = 'themedata'

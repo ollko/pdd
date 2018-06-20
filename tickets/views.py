@@ -1,36 +1,162 @@
 # coding=utf-8
 
+import re
 
+
+from django.http import Http404
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
-	DetailView, ListView, TemplateView,
-	)
+    DetailView, ListView, TemplateView,
+    )
+# from django.views.generic.edit import FormMixin
+from django.views.decorators.http import require_POST
+
+
 from .models import (
-	Ticket,
-	Question,
-	Theme,
-	)
-
-class TicketListView(ListView):
-	model = Ticket
-	template_name = 'tickets/ticket_list.html'
-	context_object_name = 'tickets'
+    Ticket,
+    Question,
+    Theme,
+    Choice,
+    )
+from pass_data import Pdddata, Stars, Themedata
+from generic.mixins import PddContextMixin
 
 
-class ThemeListView(ListView):
-	model = Theme
-	template_name = 'tickets/theme_list.html'
-	context_object_name = 'themes'
+class TicketListView(PddContextMixin, TemplateView):
+    template_name = 'tickets/ticket_list.html'
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(TicketListView, self).get_context_data(*args, **kwargs) 
+        pdddata = Pdddata(self.request).pdddata
+        tickets = Ticket.objects.all()
+        ticket_with_ans = []
+        for ticket in tickets:
+            t = ticket.tick_number
+            tick_item = [ ticket ]
+            if str(t) in pdddata.keys():
+                w = len( pdddata[ str(t) ] )
+                r = len(ticket.questions.all()) - w
+                tick_item.append(r)
+                tick_item.append(w)
+            ticket_with_ans.append(tick_item)
+        context['tickets'] = ticket_with_ans
+        return context
+
+
+class ThemeListView(PddContextMixin, TemplateView):
+    template_name = 'tickets/theme_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ThemeListView, self).get_context_data(*args, **kwargs) 
+        themedata = Themedata(self.request).themedata
+        themes = Theme.objects.all()
+        theme_with_ans = []
+        for theme in themes:
+            theme_id = theme.id
+            theme_item = [ theme ]
+            if str(theme_id) in themedata.keys():
+                w = len( themedata[ str(theme_id) ] )
+                r = len(theme.questions.all()) - w
+                theme_item.append(r)
+                theme_item.append(w)
+            theme_with_ans.append(theme_item)
+        context['themes'] = theme_with_ans
+        return context
 
 
 class QuestionDetailView(DetailView):
-	model = Question
-	template_name = 'tickets/question_detail.html'	
-	context_object_name = 'question'
+    model = Question
+    template_name = 'tickets/question_detail.html'  
+    context_object_name = 'question'
 
 
-class ExamTemplateView(TemplateView):
-	template_name = 'tickets/exam.html'
+    def get_context_data(self, *args, **kwargs):
+        context = super(QuestionDetailView, self).get_context_data(*args, **kwargs)
+
+        if re.match(r'\/tickets\/\d+\/', self.request.path):
+            tab =  'tickets'
+        else:
+            tab =  None
+        context['tab'] = tab
+     
+        stars = Stars( self.request )
+        context['stars'] = stars.stars
+        n = len(self.object.ticket.questions.all()) - len(stars.stars)
+        context['grey_stars'] = [None for i in range(n)]
+        return context
 
 
-class MarathonTemplateView(TemplateView):
-	template_name = 'tickets/marathon.html'
+@require_POST
+def pdddataAdd(request, pk):
+     # pk - pk вопроса
+    pdddata = Pdddata(request)
+    stars = Stars(request)
+    question = get_object_or_404( Question, pk = pk )
+    question_id_list = question.get_question_id_list_in_ticket()
+    if int(pk) == question_id_list[0]:
+        pdddata.remove_ticket(question)
+       
+
+    user_choice = int(request.POST['choice'])
+    right_choice = question.get_right_choice
+    
+    if not user_choice == right_choice:
+        pdddata.add_data(question, user_choice)
+        stars.add_data(question, data = 'red')
+    else:
+        stars.add_data(question, data = 'green')
+    try:
+        next_question_id = question_id_list[ question_id_list.index( int(pk) ) +1 ]
+    except IndexError:
+        stars.clear()
+        return redirect( '/tickets/ticket_report?ticket_id=' + str(question.ticket.id) )
+    return redirect('tickets:question_detail', str(next_question_id))
+    
+
+
+def pdddataClear(request):
+    pdddata = Pdddata(request)
+    pdddata.clear()
+    stars = Stars(request)
+    stars.clear()
+    return redirect('tickets:ticket_list')
+
+
+class TicketReportView(TemplateView):
+    template_name = 'tickets/ticket_report.html'
+    
+
+    def get_context_data(self, **kwargs):
+        context = super(TicketReportView, self).get_context_data(**kwargs)
+        pdddata = Pdddata(self.request)
+        ticket_id = self.request.GET['ticket_id']
+        try:
+            pdddata_one_ticket = pdddata.pdddata[ticket_id]
+        except KeyError:
+            raise Http404() 
+        l = len(pdddata_one_ticket)
+        ticket = get_object_or_404(Ticket, id = ticket_id)
+        context['ticket_number'] = ticket.tick_number
+        context['wrong_ans'] = l
+        questions_num = len(ticket.questions.all())
+        context['right_ans'] = questions_num - l
+        # данные для сводки правильный/неправильный ответ
+        data = []
+        for item in pdddata_one_ticket:
+            d = {}
+            question = Question.objects.get(id = item['question'])
+            d['question'] = question
+
+            d['user_wrong_choice'] = Choice.objects.get(id = item['user_wrong_choice_id']).choice_text
+            data.append(d)
+        context['data'] = data
+        return context
+
+
+class ExamTemplateView(PddContextMixin, TemplateView):
+    template_name = 'tickets/exam.html'
+
+
+class MarathonTemplateView(PddContextMixin, TemplateView):
+    template_name = 'tickets/marathon.html'

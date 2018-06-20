@@ -1,0 +1,46 @@
+{% extends "base/__base.html" %}
+
+{% block content %}
+
+
+<h2 class="text-primary text-center">Ваш результат:</h2>
+<h4 class="text-primary text-center">Билет №{{ ticket_number }}</h4>
+
+<p class="text-center" style='bac'>Правильных ответов: <span class="badge" style='background-color:green;'>{{ right_ans }}</span></p>
+<p class="text-center">Сделали ошибок: <span class="badge" style='background-color:red;'>{{ wrong_ans }}</span></p>
+
+
+{% for question in data %}
+
+<br>
+	<div class="row">
+	<div class="col-xs-12 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question.id }}</button></div>
+	</div>
+	<br>
+	{% if question.question.image %}<img class="img-responsive" src="{{ question.question.image.url }}">{% endif %}
+	<br>
+	<table class="table">
+	<tbody>
+	
+		<tr>
+			<th>Ваш ответ:</th>
+			<td class="text-danger">{{ question.user_wrong_choice }}</td>
+		</tr>
+		<tr>
+			<th>Правильный ответ:</th>
+			<td class="text-success">{{ question.question.get_right_choice_text }}</td>
+		</tr>
+		<tr>
+			<th>Подсказка:</th>
+			<td></td>
+		</tr>
+
+	</tbody>
+</table>
+
+
+	
+
+{% endfor %}
+
+{% endblock content %}

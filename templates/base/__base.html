@@ -29,13 +29,15 @@
     <![endif]-->
   </head>
   <body>
-      <div class="container">
-    <h1 class='text-center lead'>Решение билетов (сайт на питоне фреймворк Django)</h1>
-    <h2 class='text-center lead'>Решение Билетов ПДД аналогично донору. http://pdd-new.ru</h2>
-    <br>
-    {% include 'base/include/pdd_nav.html' %}
-    {% block content %}{% endblock content %}
-  </div>
+    <div class="container-fluid">
+      <div class='col-sm-6 col-sm-offset-3'>  
+        <h1 class='text-center lead'>Решение билетов (сайт на питоне фреймворк Django)</h1>
+        <br>
+        {% include 'base/includes/_pdd_nav.html' %}
+        {% block progressbar %}{% endblock progressbar %}
+        {% block content %}{% endblock content %}
+      </div>
+    </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -45,13 +47,23 @@
     <script src="{% static 'js/pdd-js.js' %}"></script>
 
     <script>$(document).ready(function(){
+
       $(".pdd-pass-button").click(function(){
-        $(".pdd-label").each(function(){
-          $(this).addClass( "pdd-pass-question" )
+        var checked_groupe = false
+        $('.pdd-ticket-input').each(function(){
+          if ( $(this).prop( "checked" ) ) {
+            checked_groupe = true;
+          }
         });
-        $(".pdd-pass-button").css( "display", "none" );
-        
-        $(".pdd-next-button").css( "display", "block" );
+
+        if (checked_groupe === true) {
+          $(".pdd-label").each(function(){
+            $(this).addClass( "pdd-pass-question" )
+          });
+          $(".pdd-pass-button").css( "display", "none" );
+          $(".pdd-next-button").css( "display", "inline-block" );
+          // $('input.pdd-ticket-input').attr('disabled', "disabled");
+        }
       })
     })</script>
   </body>

@@ -1,3 +1,39 @@
 {% extends "base/__base.html" %}
 
-{% block content %}{% endblock content %}
+{% block content %}
+<br>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Тема</th>
+			<th>Вопросы</th>
+			<th>Результат</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for theme in themes %}
+
+		{% if theme.0.get_first_question_num %}
+		<tr>
+			<td><a href="{% url 'tickets:question_detail' theme.0.get_first_question_num %}">{{ theme.0.name }}</a></td>
+			<td>{{ theme.0.ticket_number }}</td>
+			{% if ticket.1 %}
+			<td>
+				<div>
+					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket.1 }}</span>
+					</small>
+				</div>
+				<div>
+					<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ ticket.2 }}</span></small>
+				</div>
+			</td>
+				{% else %}
+			<td>Не пройдено</td>	
+				{% endif %}	
+			
+		</tr>
+		{% endif %}
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock content %}

@@ -2,6 +2,7 @@
 
 .pdd-label{
 	font-weight: 400;
+	display: inline-table;
 }
 
 
@@ -16,3 +17,11 @@ input[type="radio"] + .pdd-label.right-ans.pdd-pass-question {
 input[type="radio"]:checked + .pdd-label.wrong-ans.pdd-pass-question {
     color: red;
    }
+
+.pdd-progress-nav{
+	font-size: 2em;
+}
+
+/*.nav-tabs>li>a {
+    background-color: cornsilk;
+}*/

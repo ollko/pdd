@@ -1,14 +1,32 @@
 {% extends "base/__base.html" %}
 
+
 {% block content %}
+<div class = 'row'>
+<br>
 
 	{% for ticket in tickets %}
-	<div class = 'row'>
-	{% if ticket.get_first_question_num %}
-		<div class="col-md-3 col-sm-6"><a href='{% url "tickets:question_detail"  ticket.get_first_question_num %}'>Билет № {{ ticket.tick_number }}</a></div>
-	
-	{% endif %}
-	</div>
+		{% if ticket.0.get_first_question_num %}
+
+			<div class="col-md-3 col-sm-6 ">
+			<div class="bg-warning" >
+				<div class="text-center  tick-number-{{ ticket.0 }}">
+					<a href='{% url "tickets:question_detail"  ticket.0.get_first_question_num %}'>Билет № {{ ticket.0.tick_number }}</a>					
+				</div>
+				{% if ticket.1 %}
+				<div>
+					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket.1 }}</span>
+					</small>
+				</div>
+				<div>
+					<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ ticket.2 }}</span></small>
+				</div>
+				{% endif %}				
+			</div>				
+
+			</div>
+		{% endif %}	
 	{% endfor %}
 
+</div>
 {% endblock content %}

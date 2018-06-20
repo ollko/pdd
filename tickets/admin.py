@@ -15,13 +15,6 @@ class ChoiceItemInline(admin.TabularInline):
                     'choice_status',]
 
 
-    # def get_max_num(self, request, obj=None, **kwargs):
-    #     max_num = 10
-    #     if obj.question:
-    #         return max_num - 5
-    #     return max_num
-
-
 class QuestionAdmin(admin.ModelAdmin):
     list_display = (
                     'question', 
@@ -31,11 +24,10 @@ class QuestionAdmin(admin.ModelAdmin):
 
     fields =   ('ticket',
                 'theme',
+                'image',
                 'question',
                 )
 
     inlines = [ChoiceItemInline]
 
 admin.site.register(Question, QuestionAdmin)
-
-admin.site.register(Choice)
