@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_list_or_404
-
+from django.http import Http404
 
 DRIVE_CATEGORY = (('A, B, M', 'A, B, M'), ('C и Д', 'C и Д'))
 
@@ -18,8 +18,10 @@ class Ticket(models.Model):
     def __unicode__(self):
         return 'Билет №'+str(self.tick_number)
 
+
     def get_absolute_url(self):
         return reverse('tickets:ticket_detail', args=[self.pk, ])
+
 
     def get_first_question_num(self):
         question = self.questions.first()
@@ -27,22 +29,13 @@ class Ticket(models.Model):
             return str(question.id)
         return None
 
-    # def get_right_wrong_answer_num(self):
-    #     print '22222222222222'
-    #     pdddata = Session.objects.all().first()
-    #     try:
-    #         user_ticket_ans = pdddata.get_decoded()['pdd'][str(self.id)]
-    #     except KeyError:
-    #         return None
-    #     if len(user_ticket_ans.keys()) == 20:
-    #         right_answer_num = 0
-    #         for i in user_ticket_ans.keys():
-    #             if int(user_ticket_ans[i]) == self.questions.all().get(id = int(i)).get_right_choice():
-    #                 right_answer_num +=1
 
-    #         wrong_answer_num = 20 - right_answer_num
-    #         return (right_answer_num, wrong_answer_num)
-    #     return None
+    def get_question_id_list_in_ticket(self):
+        questions = self.questions.all()
+        question_id_list = []
+        for question in questions:
+            question_id_list.append( unicode(question.id) )
+        return question_id_list
 
 
 class Theme(models.Model):
@@ -97,7 +90,9 @@ class Question(models.Model):
         choices = self.choice_set.all()
         for choice in choices:
             if choice.choice_status:
-                return choice.id
+                choice_id = choice.id
+                return choice_id
+        raise Http404('Проверьте наличие ответа на вопрос №%s в БД!' % str(self.id) )
 
 
     @property

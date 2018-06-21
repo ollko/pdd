@@ -18,7 +18,7 @@ from .models import (
     Theme,
     Choice,
     )
-from pass_data import Pdddata, Stars, Themedata, Report
+from pass_data import Pdddata, Stars, Themedata, Report, ErrorsPdd
 from generic.mixins import PddContextMixin
 
 
@@ -28,21 +28,17 @@ class TicketListView(PddContextMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(TicketListView, self).get_context_data(*args, **kwargs) 
-        pdddata = Pdddata(self.request).pdddata
+        report = Report(self.request).report
         tickets = Ticket.objects.all()
-        ticket_with_ans = []
+        ticket_with_result = []
         for ticket in tickets:
-            t = ticket.tick_number
-            tick_item = [ ticket ]
-            if str(t) in pdddata.keys():
-                w = len( pdddata[ str(t) ] )
-                r = len(ticket.questions.all()) - w
-                tick_item.append(r)
-                tick_item.append(w)
-            ticket_with_ans.append(tick_item)
-        context['tickets'] = ticket_with_ans
+            tick_item = report.get( 'ticket_' + str(ticket.id), {} )
+            tick_item[ 'ticket' ] = ticket
+            ticket_with_result.append(tick_item)
+        context['tickets'] = ticket_with_result
         return context
 
+# self.report= {u'ticket_1': {u'wrong': 14, u'right': 6}, u'ticket_2': {'wrong': 1, 'right': 1}}
 
 class ThemeListView(PddContextMixin, TemplateView):
     template_name = 'tickets/theme_list.html'
@@ -63,6 +59,7 @@ class ThemeListView(PddContextMixin, TemplateView):
             theme_with_ans.append(theme_item)
         context['themes'] = theme_with_ans
         return context
+
 
 
 class QuestionDetailView(DetailView):
@@ -90,28 +87,34 @@ class QuestionDetailView(DetailView):
 @require_POST
 def pdddataAdd(request, pk):
      # pk - pk вопроса
-    pdddata = Pdddata(request)
-    stars = Stars(request)
-    report = Report(request)
+    pdddata, stars, report, errors = (
+        Pdddata(request),
+        Stars(request),
+        Report(request),
+        ErrorsPdd(request),
+    )
     question = get_object_or_404( Question, pk = pk )
     question_id_list = question.get_question_id_list_in_ticket()
-    if int(pk) == question_id_list[0]:
-        pdddata.remove_ticket(question)
-       
-
+    
     user_choice = int(request.POST['choice'])
     right_choice = question.get_right_choice
-    
+    question_id = unicode( question.id )
+
     if not user_choice == right_choice:
-        pdddata.add_data(question, user_choice)
+        wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
+        right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
+        errors.add_data( question_id, wrong_text, right_text )
         stars.add_data(question, data = 'red')
     else:
+        print 'errors.errors=',errors.errors
+        if question_id in errors.errors.keys():
+            errors.remove_question_data( question_id )
         stars.add_data(question, data = 'green')
     try:
         next_question_id = question_id_list[ question_id_list.index( int(pk) ) +1 ]
     except IndexError:
-        # пройдены все вопросы в билете:
-        # записываем число правильных/неправильных вопросов для отчета по билету
+        # пройдены все вопросы в билете -> записываем число правильных/неправильных вопросов
+        # для отчета по билету
         right, wrong = ( 0, 0 )
         for item in stars.stars:
             if item == 'green':
@@ -127,12 +130,16 @@ def pdddataAdd(request, pk):
 
 
 def pdddataClear(request):
-    pdddata = Pdddata(request)
-    stars = Stars(request)
-    report = Report(request)
+    pdddata, stars, report, errors = (
+        Pdddata(request),
+        Stars(request),
+        Report(request),
+        ErrorsPdd(request),
+    )
     pdddata.clear()
     stars.clear()
     report.clear()
+    errors.clear()
     return redirect('tickets:ticket_list')
 
 
@@ -142,8 +149,12 @@ class TicketReportView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TicketReportView, self).get_context_data(**kwargs)
-        report = Report(self.request)
-        pdddata = Pdddata(self.request)
+        pdddata, stars, report, errors = (
+            Pdddata(self.request),
+            Stars(self.request),
+            Report(self.request),
+            ErrorsPdd(self.request),
+        )
         ticket_id = self.request.GET['ticket_id']
         ticket = get_object_or_404(Ticket, id = ticket_id)
         
@@ -152,24 +163,34 @@ class TicketReportView(TemplateView):
         except KeyError:
             raise Http404('Билет еще не пройден!')
         context['ticket_number'] = ticket.tick_number
-        print 'one_ticket_report_data = ',one_ticket_report_data
         context['right_ans'] = one_ticket_report_data[ 'right' ]
         context['wrong_ans'] = one_ticket_report_data[ 'wrong' ]
         
         # данные для сводки правильный/неправильный ответ
-        try:
-            pdddata_one_ticket = pdddata.pdddata[ticket_id]
-        except KeyError:
-            return context
+        question_id_with_error = set( errors.errors.keys() )
+        question_in_current_ticket = set( ticket.get_question_id_list_in_ticket())
+        print 'question_id_with_error = ',question_id_with_error
+        print 'question_in_current_ticket = ',question_in_current_ticket
+        current_question_wrong_answers = question_id_with_error & question_in_current_ticket
 
         data = []
-        for item in pdddata_one_ticket:
-            d = {}
-            question = Question.objects.get(id = item['question'])
-            d['question'] = question
+        for item in current_question_wrong_answers:
+            data.append( errors.errors[ item ] )
 
-            d['user_wrong_choice'] = Choice.objects.get(id = item['user_wrong_choice_id']).choice_text
-            data.append(d)
+
+        # try:
+        #     pdddata_one_ticket = pdddata.pdddata[ticket_id]
+        # except KeyError:
+        #     return context
+
+        # data = []
+        # for item in pdddata_one_ticket:
+        #     d = {}
+        #     question = Question.objects.get(id = item['question'])
+        #     d['question'] = question
+
+        #     d['user_wrong_choice'] = Choice.objects.get(id = item['user_wrong_choice_id']).choice_text
+        #     data.append(d)
         context['data'] = data
         return context
 

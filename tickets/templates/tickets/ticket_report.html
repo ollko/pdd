@@ -19,23 +19,25 @@
 	<br>
 	{% if question.question.image %}<img class="img-responsive" src="{{ question.question.image.url }}">{% endif %}
 	<br>
+
 	<table class="table">
 	<tbody>
 	
 		<tr>
 			<th>Ваш ответ:</th>
-			<td class="text-danger">{{ question.user_wrong_choice }}</td>
+			<td class="text-danger">{{ question.wrong_text }}</td>
 		</tr>
 		<tr>
 			<th>Правильный ответ:</th>
-			<td class="text-success">{{ question.question.get_right_choice_text }}</td>
+			<td class="text-success">{{ question.right_text }}</td>
 		</tr>
 		<tr>
 			<th>Подсказка:</th>
 			<td></td>
 		</tr>
-
+	
 	</tbody>
+
 </table>
 
 

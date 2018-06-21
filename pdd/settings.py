@@ -138,3 +138,5 @@ STAR_SESSION_ID = 'stars'
 THEME_SESSION_ID = 'themedata'
 
 REPORT_SESSION_ID = 'report'
+
+PDD_ERRORS_SESSION_ID = 'errors'

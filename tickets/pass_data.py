@@ -3,6 +3,45 @@
 from django.conf import settings
 from .models import Ticket, Question
 
+
+class ErrorsPdd(object):
+    def __init__(self, request):
+        self.session = request.session
+        errors = self.session.get(settings.PDD_ERRORS_SESSION_ID)
+        if not errors:
+            # Сохраняем объект данных пользователя в сессию
+            errors = self.session[settings.PDD_ERRORS_SESSION_ID] = {}
+        self.errors = errors
+
+
+    def add_data( self, question_id, wrong_text, right_text ):
+        self.errors[ question_id ] = {}
+        self.errors[ question_id ][ 'right_text' ] = right_text
+        self.errors[ question_id ][ 'wrong_text' ] = wrong_text
+        print 'self.errors=',self.errors
+        self.save()
+
+
+    def remove_question_data( self, question_id ):
+        print 'self.errors = ',self.errors
+        print 'type(question_id) = ', type(question_id)
+        self.errors.pop( question_id )
+        self.save()
+
+
+
+    # Сохранение данных в сессию
+    def save(self):
+        self.session[settings.PDD_ERRORS_SESSION_ID] = self.errors
+        # Указываем, что сессия изменена
+        self.session.modified = True
+
+
+    def clear(self):
+        del self.session[settings.PDD_ERRORS_SESSION_ID]
+        self.session.modified = True
+
+
 class Report(object):
     def __init__(self, request):
         self.session = request.session
@@ -31,7 +70,7 @@ class Report(object):
         del self.session[settings.REPORT_SESSION_ID]
         self.session.modified = True
 
-        
+
 class Stars(object):
     def __init__(self, request):
         self.session = request.session
