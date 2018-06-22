@@ -18,11 +18,6 @@ class ErrorsPdd(object):
         self.errors[ question_id ] = {}
         self.errors[ question_id ][ 'right_text' ] = right_text
         self.errors[ question_id ][ 'wrong_text' ] = wrong_text
-        # print '111111111111'
-        # self.errors[ question_id ][ 'question' ] = [ ]
-        # self.errors[ question_id ][ 'question' ].append( question )
-        # print '2222222222222'
-        print 'self.errors=',self.errors
         self.save()
 
 
@@ -37,8 +32,6 @@ class ErrorsPdd(object):
 
 
     def remove_question_data( self, question_id ):
-        # print 'self.errors = ',self.errors
-        # print 'type(question_id) = ', type(question_id)
         self.errors.pop( question_id )
         self.save()
 
@@ -70,8 +63,6 @@ class Report(object):
         self.report[ val ] = {}
         self.report[ val ][ 'right' ] = right
         self.report[ val ][ 'wrong' ] = wrong
-        
-        # print 'self.report=',self.report
         self.save()
 
     # Сохранение данных в сессию

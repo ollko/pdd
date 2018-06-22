@@ -1,12 +1,15 @@
 <div class="row">
 <br>
-	<div style="width: 500px; margin-left: auto; margin-right:auto; color: #cccccc">
+	<div style="width: 500px; margin-left: auto; margin-right:auto; color: #cccccc; font-size: 1.4em;">
 	{% for star in stars %}		
-		<span class="glyphicon glyphicon-star" aria-hidden="true" style="font-size: 1.5em; color:{{ star }}"></span>
+		<span class="glyphicon glyphicon-star" aria-hidden="true" style="color:{{ star }}"></span>
 	{% endfor %}
 
 	{% for star in grey_stars %}
-		<span class="glyphicon glyphicon-star" aria-hidden="true" style="font-size: 1.5em; color:{{ star }}"></span>
+	<span class="">
+		<span class="glyphicon glyphicon-star" aria-hidden="true" ></span>
+	</span>
+		
 	{% endfor %}
 	
 	</div>

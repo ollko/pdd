@@ -1,0 +1,16 @@
+{% extends "base/__base.html" %}
+
+
+{% block content %}
+{{question_pk}}
+<h2 class="text-primary text-center">Работа над ошибками:</h2>
+<p class="text-center" >В данном разделе собираются ваши ошибки, которые вы сделали решая <strong>разделы «билеты, темы и марафон»</strong>. {% if pk %}Для того, чтобы исправить свои ошибки, нажмите на кнопку ниже.{% endif %}</p>
+
+<p class="text-center" style='bac'>Сейчас у вас {% if errors %}<span class="badge" style='background-color:red;'>{{ errors }}</span>{% else %} <strong>нет</strong>{% endif %} ошибок: </p>
+<br>
+{% if pk %}
+<p class="text-center">
+	<a class="btn btn-primary" href="{% url 'tickets:question_detail' pk %}" role="button">Начать работу над ошибками</a>
+</p>
+{% endif %}
+{% endblock content %}

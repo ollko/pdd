@@ -7,7 +7,7 @@
   {% url 'tickets:theme_list' as theme_list %}
   <li role="presentation" {% if nav_tab == 'theme' %}class="active"{% endif %}><a href="{% url 'tickets:theme_list'%}">Темы</a></li>
   <li role="presentation" ><a href="#">Марафон 800</a></li>
-  <li role="presentation"><a href="#">Мои ошибки</a></li>
+  <li role="presentation"><a href="{% url 'tickets:errors' %}">Мои ошибки</a></li>
   <li role="presentation" class='hidden-xs'><a href="{% url 'tickets:pdddataClear'%}">Очистить историю</a></li>
   <li role="presentation" class='hidden-xs'><a href="#">ПДД виджет</a></li>
 </ul>
