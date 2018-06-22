@@ -14,10 +14,10 @@
 
 <br>
 	<div class="row">
-	<div class="col-xs-12 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question.id }}</button></div>
+	<div class="col-xs-12 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ item.question.0.id }}</button></div>
 	</div>
 	<br>
-	{% if question.question.image %}<img class="img-responsive" src="{{ question.question.image.url }}">{% endif %}
+	{% if item.question.0.image %}<img class="img-responsive" src="{{ item.question.0.image.url }}">{% endif %}
 	<br>
 
 	<table class="table">

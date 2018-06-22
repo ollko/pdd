@@ -121,7 +121,7 @@ def pdddataAdd(request, pk):
     if not user_choice == right_choice:
         wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
         right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
-        errors.add_data( question_id, wrong_text, right_text )
+        errors.add_data( question_id, question, wrong_text, right_text )
         stars.add_data(question, data = 'red')
     else:
         if question_id in errors.errors.keys():
@@ -251,8 +251,9 @@ class ThemeReportView(TemplateView):
         print 'current_question_wrong_answers = ',current_question_wrong_answers
         data = []
         for item in current_question_wrong_answers:
-            data.append( errors.errors[ item ] )
 
+            data.append( errors.errors[ item ] )
+        print 'data = ',data
         context['data'] = data
         return context
 

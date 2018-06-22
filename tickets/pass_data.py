@@ -14,11 +14,14 @@ class ErrorsPdd(object):
         self.errors = errors
 
 
-    def add_data( self, question_id, wrong_text, right_text ):
+    def add_data( self, question_id, question, wrong_text, right_text ):
         self.errors[ question_id ] = {}
         self.errors[ question_id ][ 'right_text' ] = right_text
         self.errors[ question_id ][ 'wrong_text' ] = wrong_text
-        # print 'self.errors=',self.errors
+        print '111111111111'
+        self.errors[ question_id ][ 'question' ] = [ question ]
+        print '2222222222222'
+        print 'self.errors=',self.errors
         self.save()
 
 
