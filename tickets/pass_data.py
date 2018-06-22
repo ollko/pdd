@@ -14,15 +14,26 @@ class ErrorsPdd(object):
         self.errors = errors
 
 
-    def add_data( self, question_id, question, wrong_text, right_text ):
+    def add_data( self, question_id, wrong_text, right_text ):
         self.errors[ question_id ] = {}
         self.errors[ question_id ][ 'right_text' ] = right_text
         self.errors[ question_id ][ 'wrong_text' ] = wrong_text
-        print '111111111111'
-        self.errors[ question_id ][ 'question' ] = [ question ]
-        print '2222222222222'
+        # print '111111111111'
+        # self.errors[ question_id ][ 'question' ] = [ ]
+        # self.errors[ question_id ][ 'question' ].append( question )
+        # print '2222222222222'
         print 'self.errors=',self.errors
         self.save()
+
+
+    def __iter__(self):
+        question_ids = self.errors.keys()
+        questions = Question.objects.filter(id__in = question_ids)
+        for question in questions:
+            self.errors[str(question.id)]['question'] = question
+
+        for item in self.errors.values():
+            yield item
 
 
     def remove_question_data( self, question_id ):

@@ -14,15 +14,18 @@
 
 <br>
 	<div class="row">
-	<div class="col-xs-12 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ item.question.0.id }}</button></div>
+	<div class="col-xs-12 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ item.question_id }}</button></div>
 	</div>
 	<br>
-	{% if item.question.0.image %}<img class="img-responsive" src="{{ item.question.0.image.url }}">{% endif %}
-	<br>
+	<img class="img-responsive" src="{{ item.question_img }}">
 
 	<table class="table">
 	<tbody>
-	
+		<thead>
+			<tr>
+				<th colspan="2" class="text-center">{{ item.question_text }}</th>
+			</tr>
+		</thead>
 		<tr>
 			<th>Ваш ответ:</th>
 			<td class="text-danger">{{ item.wrong_text }}</td>
@@ -38,8 +41,7 @@
 	
 	</tbody>
 
-</table>
-
+	</table>
 
 	
 
