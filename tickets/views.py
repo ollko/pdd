@@ -29,13 +29,19 @@ class TicketListView(PddContextMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(TicketListView, self).get_context_data(*args, **kwargs) 
         report = Report(self.request).report
+        stars = Stars(self.request)
+        stars.clear()
         tickets = Ticket.objects.all()
         ticket_with_result = []
         for ticket in tickets:
             tick_item = report.get( 'ticket_' + str(ticket.id), {} )
-            tick_item[ 'ticket' ] = ticket
+            tick_item[ 'tick_number' ] = ticket.tick_number
+            tick_item[ 'first_question_num' ] = ticket.get_first_question_num()
+
             ticket_with_result.append(tick_item)
+        print 'ticket_with_result = ',ticket_with_result
         context['tickets'] = ticket_with_result
+        self.request.session['nav_tab'] = 'ticket'
         return context
 
 # self.report= {u'ticket_1': {u'wrong': 14, u'right': 6}, u'ticket_2': {'wrong': 1, 'right': 1}}
@@ -44,22 +50,21 @@ class ThemeListView(PddContextMixin, TemplateView):
     template_name = 'tickets/theme_list.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ThemeListView, self).get_context_data(*args, **kwargs) 
-        themedata = Themedata(self.request).themedata
+        context = super(ThemeListView, self).get_context_data(*args, **kwargs)
+        report = Report(self.request).report
+        stars = Stars(self.request)
         themes = Theme.objects.all()
-        theme_with_ans = []
+        theme_with_result = []
         for theme in themes:
-            theme_id = theme.id
-            theme_item = [ theme ]
-            if str(theme_id) in themedata.keys():
-                w = len( themedata[ str(theme_id) ] )
-                r = len(theme.questions.all()) - w
-                theme_item.append(r)
-                theme_item.append(w)
-            theme_with_ans.append(theme_item)
-        context['themes'] = theme_with_ans
-        return context
+            theme_item = report.get( 'theme_' + str(theme.id), {} )
+            theme_item[ 'theme_name' ] = theme.name
+            theme_item[ 'first_question_num' ] = theme.get_first_question_num()
 
+            theme_item[ 'ticket_number' ] = len(theme.questions.all())
+            theme_with_result.append(theme_item)
+        context['themes'] = theme_with_result
+        self.request.session['nav_tab'] = 'theme'
+        return context
 
 
 class QuestionDetailView(DetailView):
@@ -71,15 +76,26 @@ class QuestionDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(*args, **kwargs)
 
-        if re.match(r'\/tickets\/\d+\/', self.request.path):
-            tab =  'tickets'
-        else:
-            tab =  None
-        context['tab'] = tab
+        # if re.match(r'\/tickets\/\d+\/', self.request.path):
+        #     tab =  'tickets'
+        # else:
+        #     tab =  None
+        # context['tab'] = tab
      
         stars = Stars( self.request )
         context['stars'] = stars.stars
-        n = len(self.object.ticket.questions.all()) - len(stars.stars)
+        nav_tab = self.request.session.get('nav_tab')
+        context['nav_tab'] = nav_tab
+        if nav_tab == 'ticket':
+            qs = self.object.ticket.questions.all()
+        elif nav_tab == 'theme':
+            # print "qqqqqqqqqq"
+            qs = self.object.theme.questions.all()
+        else:
+            return redirect('tickets:ticket_list')
+        n = len(qs) - len(stars.stars) 
+        # print 'qs = ',self.object.theme.questions.all() 
+        # print 'n = ',n       
         context['grey_stars'] = [None for i in range(n)]
         return context
 
@@ -93,9 +109,11 @@ def pdddataAdd(request, pk):
         Report(request),
         ErrorsPdd(request),
     )
+
     question = get_object_or_404( Question, pk = pk )
-    question_id_list = question.get_question_id_list_in_ticket()
+
     
+
     user_choice = int(request.POST['choice'])
     right_choice = question.get_right_choice
     question_id = unicode( question.id )
@@ -106,12 +124,19 @@ def pdddataAdd(request, pk):
         errors.add_data( question_id, wrong_text, right_text )
         stars.add_data(question, data = 'red')
     else:
-        print 'errors.errors=',errors.errors
         if question_id in errors.errors.keys():
             errors.remove_question_data( question_id )
         stars.add_data(question, data = 'green')
+
+    nav_tab = request.session['nav_tab']
+    if nav_tab == 'ticket':
+        question_id_list = question.get_question_id_list_in_ticket()
+    elif nav_tab == 'theme':
+        question_id_list = question.get_question_id_list_in_theme()
+    else:
+        pass
     try:
-        next_question_id = question_id_list[ question_id_list.index( int(pk) ) +1 ]
+        next_question_id = question_id_list[ question_id_list.index( int(pk) ) + 1 ]
     except IndexError:
         # пройдены все вопросы в билете -> записываем число правильных/неправильных вопросов
         # для отчета по билету
@@ -121,10 +146,24 @@ def pdddataAdd(request, pk):
                 right += 1
             else:
                 wrong += 1
-        ticket_id = str(question.ticket.id)
-        report.add_data(ticket_id, right, wrong)
-        stars.clear()
-        return redirect( '/tickets/ticket_report?ticket_id=' + ticket_id )
+
+        if nav_tab == 'ticket':
+            ticket_id = str(question.ticket.id)
+            val = 'ticket_' + ticket_id
+            report.add_data(val, right, wrong)
+            stars.clear()
+            return redirect( '/tickets/ticket_report?ticket_id=' + ticket_id )
+        elif nav_tab == 'theme':
+            theme_id = str(question.theme.id)
+            val = 'theme_' + theme_id
+            report.add_data(val, right, wrong)
+            stars.clear()
+            return redirect( '/tickets/theme_report?theme_id=' + theme_id )
+        else:
+            return redirect( 'tickets:ticket_list' )
+
+        
+        
     return redirect('tickets:question_detail', str(next_question_id))
     
 
@@ -172,25 +211,48 @@ class TicketReportView(TemplateView):
         print 'question_id_with_error = ',question_id_with_error
         print 'question_in_current_ticket = ',question_in_current_ticket
         current_question_wrong_answers = question_id_with_error & question_in_current_ticket
+        print 'current_question_wrong_answers = ',current_question_wrong_answers
+        data = []
+        for item in current_question_wrong_answers:
+            data.append( errors.errors[ item ] )
+        print 'data=',data
+        context['data'] = data
+        return context
 
+class ThemeReportView(TemplateView):
+    template_name = 'tickets/theme_report.html'
+    
+
+    def get_context_data(self, **kwargs):
+        context = super(ThemeReportView, self).get_context_data(**kwargs)
+        pdddata, stars, report, errors = (
+            Pdddata(self.request),
+            Stars(self.request),
+            Report(self.request),
+            ErrorsPdd(self.request),
+        )
+        theme_id = self.request.GET['theme_id']
+        theme = get_object_or_404(Theme, id = theme_id)
+        
+        try:
+            one_theme_report_data = report.report[ 'theme_' + theme_id ]
+        except KeyError:
+            raise Http404('Тема еще не пройдена!')
+        context['theme_name'] = theme.name
+        context['right_ans'] = one_theme_report_data[ 'right' ]
+        context['wrong_ans'] = one_theme_report_data[ 'wrong' ]
+        
+        # данные для сводки правильный/неправильный ответ
+        question_id_with_error = set( errors.errors.keys() )
+        question_in_current_theme = set( theme.get_question_id_list_in_theme())
+        print 'question_id_with_error = ',question_id_with_error
+        print 'question_in_current_theme = ',question_in_current_theme
+        current_question_wrong_answers = question_id_with_error & question_in_current_theme
+        print 'current_question_wrong_answers = ',current_question_wrong_answers
         data = []
         for item in current_question_wrong_answers:
             data.append( errors.errors[ item ] )
 
-
-        # try:
-        #     pdddata_one_ticket = pdddata.pdddata[ticket_id]
-        # except KeyError:
-        #     return context
-
-        # data = []
-        # for item in pdddata_one_ticket:
-        #     d = {}
-        #     question = Question.objects.get(id = item['question'])
-        #     d['question'] = question
-
-        #     d['user_wrong_choice'] = Choice.objects.get(id = item['user_wrong_choice_id']).choice_text
-        #     data.append(d)
         context['data'] = data
         return context
 

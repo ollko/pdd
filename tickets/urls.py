@@ -8,6 +8,7 @@ from .views import (
     TicketListView,
     TicketReportView,
     ThemeListView,
+    ThemeReportView,
     pdddataAdd,
     pdddataClear,
     )
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^clear/$', pdddataClear, name='pdddataClear'),
     
     url(r'^ticket_report/$', TicketReportView.as_view(), name='ticket_report'),
+    url(r'^theme_report/$', ThemeReportView.as_view(), name='theme_report'),
     url(r'^exam/$', ExamTemplateView.as_view(), name='exam'),
     url(r'^marathon/$', MarathonTemplateView.as_view(), name='marathon'),
     url(r'^theme/$', ThemeListView.as_view(), name='theme_list'),

@@ -18,13 +18,13 @@ class ErrorsPdd(object):
         self.errors[ question_id ] = {}
         self.errors[ question_id ][ 'right_text' ] = right_text
         self.errors[ question_id ][ 'wrong_text' ] = wrong_text
-        print 'self.errors=',self.errors
+        # print 'self.errors=',self.errors
         self.save()
 
 
     def remove_question_data( self, question_id ):
-        print 'self.errors = ',self.errors
-        print 'type(question_id) = ', type(question_id)
+        # print 'self.errors = ',self.errors
+        # print 'type(question_id) = ', type(question_id)
         self.errors.pop( question_id )
         self.save()
 
@@ -52,11 +52,12 @@ class Report(object):
         self.report = report
 
 
-    def add_data(self, ticket_id, right, wrong):
-        self.report[ 'ticket_'+ticket_id ] = {}
-        self.report[ 'ticket_'+ticket_id ][ 'right' ] = right
-        self.report[ 'ticket_'+ticket_id ][ 'wrong' ] = wrong
-        print 'self.report=',self.report
+    def add_data(self, val, right, wrong):
+        self.report[ val ] = {}
+        self.report[ val ][ 'right' ] = right
+        self.report[ val ][ 'wrong' ] = wrong
+        
+        # print 'self.report=',self.report
         self.save()
 
     # Сохранение данных в сессию
@@ -162,7 +163,7 @@ class Pdddata(object):
 
 
     def clear(self):
-        print 'self.session=', self.session
+        # print 'self.session=', self.session
         del self.session[settings.PDD_SESSION_ID]
         self.session.modified = True
 
@@ -217,6 +218,6 @@ class Themedata(object):
 
 
     def clear(self):
-        print 'self.session=', self.session
+        # print 'self.session=', self.session
         del self.session[settings.THEME_SESSION_ID]
         self.session.modified = True

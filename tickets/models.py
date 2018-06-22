@@ -64,6 +64,14 @@ class Theme(models.Model):
         return None
 
 
+    def get_question_id_list_in_theme(self):
+        questions = self.questions.all()
+        question_id_list = []
+        for question in questions:
+            question_id_list.append( unicode(question.id) )
+        return question_id_list
+
+
 class Question(models.Model):
     ticket = models.ForeignKey(Ticket,
         related_name='questions',
@@ -114,6 +122,24 @@ class Question(models.Model):
         question_id_list = self.get_question_id_list_in_ticket()
         try :
             next_id = question_id_list[question_id_list.index(self.id) + 1]
+        except IndexError:
+            return None
+        return next_id
+
+
+    def get_question_id_list_in_theme(self):
+        theme_list = get_list_or_404(Question, theme = self.theme)
+        theme_id_list = []
+        for q in theme_list:
+            theme_id_list.append(q.id)
+        return theme_id_list
+
+
+
+    def next_question_in_theme_id(self):
+        theme_id_list = self.get_theme_id_list_in_ticket()
+        try :
+            next_id = theme_id_list[theme_id_list.index(self.id) + 1]
         except IndexError:
             return None
         return next_id

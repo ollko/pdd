@@ -6,11 +6,12 @@
 <br>
 
 	{% for ticket_item in tickets %}
-		{% if ticket_item.ticket.get_first_question_num %}
+		{% if ticket_item.first_question_num %}
+
 			<div class="col-md-3 col-sm-6 ">
 			<div class="bg-warning" >
-				<div class="text-center  tick-number-{{ ticket_item.ticket.ticket_num }}">
-					<a href='{% url "tickets:question_detail"  ticket_item.ticket.get_first_question_num %}'>Билет № {{ ticket_item.ticket.tick_number }}</a>					
+				<div class="text-center  tick-number-{{ ticket_item.ticket_num }}">
+					<a href='{% url "tickets:question_detail"  ticket_item.first_question_num %}'>Билет № {{ ticket_item.tick_number }}</a>					
 				</div>
 				{% if ticket_item.right %}
 				<div>
@@ -24,7 +25,7 @@
 			</div>				
 
 			</div>
-		{% endif %}	
+		{% endif %}
 	{% endfor %}
 
 </div>

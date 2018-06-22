@@ -11,20 +11,20 @@
 		</tr>
 	</thead>
 	<tbody>
-	{% for theme in themes %}
+	{% for theme_item in themes %}
 
-		{% if theme.0.get_first_question_num %}
+		{% if theme_item.first_question_num %}
 		<tr>
-			<td><a href="{% url 'tickets:question_detail' theme.0.get_first_question_num %}">{{ theme.0.name }}</a></td>
-			<td>{{ theme.0.ticket_number }}</td>
-			{% if ticket.1 %}
+			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.theme_name }}</a></td>
+			<td>{{ theme_item.ticket_number }}</td>
+			{% if theme_item.right %}
 			<td>
 				<div>
-					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket.1 }}</span>
+					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ theme_item.right }}</span>
 					</small>
 				</div>
 				<div>
-					<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ ticket.2 }}</span></small>
+					<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ theme_item.wrong }}</span></small>
 				</div>
 			</td>
 				{% else %}
