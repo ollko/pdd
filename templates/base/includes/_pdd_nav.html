@@ -2,12 +2,12 @@
 <ul class="nav nav-tabs">
   <li role="presentation" ><a href="#">Экзамен</a></li>
   {% url 'tickets:ticket_list' as tickets %}
-  {% url 'tickets:ticket_report' as ticketreport %}
-  <li role="presentation"  {% if nav_tab == 'ticket' %}class="active"{% endif %}><a href="{% url 'tickets:ticket_list'%}">Билеты</a></li>
-  {% url 'tickets:theme_list' as theme_list %}
-  <li role="presentation" {% if nav_tab == 'theme' %}class="active"{% endif %}><a href="{% url 'tickets:theme_list'%}">Темы</a></li>
+  <li role="presentation"  {% if nav_tab == 'ticket' or current_url == tickets %}class="active"{% endif %}><a href="{% url 'tickets:ticket_list'%}">Билеты</a></li>
+  {% url 'tickets:theme_list' as theme %}
+  <li role="presentation" {% if nav_tab == 'theme' or current_url == theme %}class="active"{% endif %}><a href="{% url 'tickets:theme_list'%}">Темы</a></li>
   <li role="presentation" ><a href="#">Марафон 800</a></li>
-  <li role="presentation"><a href="{% url 'tickets:errors' %}">Мои ошибки</a></li>
+  {% url 'tickets:errors' as errors %}
+  <li role="presentation" {% if nav_tab == 'errors' or current_url == errors %}class="active"{% endif %}><a href="{% url 'tickets:errors' %}">Мои ошибки</a></li>
   <li role="presentation" class='hidden-xs'><a href="{% url 'tickets:pdddataClear'%}">Очистить историю</a></li>
   <li role="presentation" class='hidden-xs'><a href="#">ПДД виджет</a></li>
 </ul>

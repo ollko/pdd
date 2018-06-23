@@ -231,6 +231,7 @@ class TicketReportView(TemplateView):
             print 'dir(errors.errors)=', dir(errors.errors)
         
         context['data'] = data
+        context['nav_tab'] = self.request.session['nav_tab']
         return context
 
 class ThemeReportView(TemplateView):
@@ -272,10 +273,11 @@ class ThemeReportView(TemplateView):
                 errors.errors[ item ][ 'question_img' ] = question.image.url
             data.append( errors.errors[ item ] )       
         context['data'] = data
+        context['nav_tab'] = self.request.session['nav_tab']
         return context
 
 
-class Errors(TemplateView):
+class Errors(PddContextMixin, TemplateView):
     template_name = 'tickets/errors.html'
 
 
@@ -302,6 +304,7 @@ class ErrorsReportView(TemplateView):
         errors = ErrorsPdd(self.request)
         errors_keys = errors.errors.keys()
         context['wrong_ans'] = len(errors_keys)
+        context['nav_tab'] = self.request.session['nav_tab']
         return context
 
 
