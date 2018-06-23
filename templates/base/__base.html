@@ -62,9 +62,24 @@
           });
           $(".pdd-pass-button").css( "display", "none" );
           $(".pdd-next-button").css( "display", "inline-block" );
+
           // $('input.pdd-ticket-input').attr('disabled', "disabled");
+
+          var checkedInput = $('.pdd-ticket-input:checked');
+          var rightChoice = $('input.right-ans');
+          var firstGreyStar = $('span.grey-star-1');
+          if ( checkedInput.attr('value') === rightChoice.attr('value') ){
+            firstGreyStar.attr( 'style', 'color: green' )
+          }
+          else {
+            firstGreyStar.attr('style', 'color: red' )
+          }
         }
       })
+
+      checkedInputValue = $('.pdd-ticket-input:checked').attr('value');
+      rightChoiceValue = $('input.right-ans').attr('value');
+      firstGreyStar = $('span.grey-star-1')
     })</script>
   </body>
 </html>

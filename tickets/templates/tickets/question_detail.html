@@ -21,7 +21,7 @@
 	<form action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
 	{% csrf_token %}
 	{% for choice in question.choice_set.all %}
-	   <input class="pdd-ticket-input" id="choice{{ forloop.counter }}" type="radio" name="choice" value="{{ choice.id }}" />
+	   <input class="pdd-ticket-input {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" id="choice{{ forloop.counter }}" type="radio" name="choice" value="{{ choice.id }}" />
 
 	    <label class="pdd-label {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
 	{% endfor %}
