@@ -16,6 +16,7 @@ class ChoiceItemInline(admin.TabularInline):
 
 
 class QuestionAdmin(admin.ModelAdmin):
+    list_display_links = ["question"]
     list_display = (
                     'id',
                     'question', 
