@@ -25,7 +25,7 @@ SECRET_KEY = 'ukcfqja9j1a^4)ep!ch+0(nn@j17=-gob$29by97z)-*-956)b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['u64358.netangels.ru',]
 
 
 # Application definition
