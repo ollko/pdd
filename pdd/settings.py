@@ -129,7 +129,13 @@ STATICFILES_DIRS = (
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'uploads')
+# MEDIA_ROOT = os.path.join(BASE_DIR,'uploads')
+
+MEDIA_ROOT = '/home/u64358/u64358.netangels.ru/www/media'
+MEDIA_URL = '/media/'
+STATIC_ROOT = '/home/u64358/u64358.netangels.ru/www/static'
+STATIC_URL = '/static/'
+
 
 PDD_SESSION_ID = 'pdd'
 
