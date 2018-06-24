@@ -13,7 +13,7 @@
 				<div class="text-center  tick-number-{{ ticket_item.ticket_num }}">
 					<a href='{% url "tickets:question_detail"  ticket_item.first_question_num %}'>Билет № {{ ticket_item.tick_number }}</a>					
 				</div>
-				{% if ticket_item.right %}
+				{% if ticket_item.right or ticket_item.wrong %}
 				<div>
 					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket_item.right }}</span>
 					</small>

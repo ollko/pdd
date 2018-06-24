@@ -17,7 +17,7 @@
 		<tr>
 			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.theme_name }}</a></td>
 			<td>{{ theme_item.ticket_number }}</td>
-			{% if theme_item.right %}
+			{% if theme_item.right or theme_item.wrong %}
 			<td>
 				<div>
 					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ theme_item.right }}</span>

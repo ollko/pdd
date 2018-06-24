@@ -18,7 +18,7 @@ from .models import (
     Theme,
     Choice,
     )
-from pass_data import Pdddata, Stars, Themedata, Report, ErrorsPdd
+from pass_data import Stars, Report, ErrorsPdd
 from generic.mixins import PddContextMixin
 
 # self.report= {u'ticket_1': {u'wrong': 14, u'right': 6}, u'ticket_2': {'wrong': 1, 'right': 1}}
@@ -87,14 +87,12 @@ class QuestionDetailView(DetailView):
         nav_tab = self.request.session.get('nav_tab')
         context['nav_tab'] = nav_tab
         if nav_tab == 'ticket':
-            qs = self.object.ticket.questions.all()
-        elif nav_tab == 'theme':
-            
-            qs = self.object.theme.questions.all()
+            star_num = len(self.object.ticket.questions.all())
+        elif nav_tab == 'theme':           
+            star_num = len(self.object.theme.questions.all())
         else:
-            errors = ErrorsPdd(self.request)
-            qs = errors.errors.keys()
-        n = len(qs) - len(stars.stars)       
+            star_num = self.request.session['grey_stars']
+        n = star_num - len(stars.stars)  
         context['grey_stars'] = [None for i in range(n)]
         return context
 
@@ -102,8 +100,7 @@ class QuestionDetailView(DetailView):
 @require_POST
 def pdddataAdd(request, pk):
      # pk - pk вопроса
-    pdddata, stars, report, errors = (
-        Pdddata(request),
+    stars, report, errors = (
         Stars(request),
         Report(request),
         ErrorsPdd(request),
@@ -117,11 +114,15 @@ def pdddataAdd(request, pk):
     if not user_choice == right_choice:
         wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
         right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
+        print 'было неправильных ответов= ',len(errors.errors)
         errors.add_data( question_id, wrong_text, right_text )
+        print 'неправильных ответов после добавления = ',len(errors.errors)
         stars.add_data(question, data = 'red')
     else:
         if question_id in errors.errors.keys():
+            print 'было неправильных ответов= ',len(errors.errors)
             errors.remove_question_data( question_id )
+            print 'неправильных ответов после удаления = ',len(errors.errors)
         stars.add_data(question, data = 'green')
 
     nav_tab = request.session['nav_tab']
@@ -177,13 +178,11 @@ def pdddataAdd(request, pk):
 
 
 def pdddataClear(request):
-    pdddata, stars, report, errors = (
-        Pdddata(request),
+    stars, report, errors = (
         Stars(request),
         Report(request),
         ErrorsPdd(request),
     )
-    pdddata.clear()
     stars.clear()
     report.clear()
     errors.clear()
@@ -196,8 +195,7 @@ class TicketReportView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TicketReportView, self).get_context_data(**kwargs)
-        pdddata, stars, report, errors = (
-            Pdddata(self.request),
+        stars, report, errors = (
             Stars(self.request),
             Report(self.request),
             ErrorsPdd(self.request),
@@ -228,7 +226,6 @@ class TicketReportView(TemplateView):
             if question.image:
                 errors.errors[ item ][ 'question_img' ] = question.image.url
             data.append( errors.errors[ item ] )
-            print 'dir(errors.errors)=', dir(errors.errors)
         
         context['data'] = data
         context['nav_tab'] = self.request.session['nav_tab']
@@ -240,8 +237,7 @@ class ThemeReportView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ThemeReportView, self).get_context_data(**kwargs)
-        pdddata, stars, report, errors = (
-            Pdddata(self.request),
+        stars, report, errors = (
             Stars(self.request),
             Report(self.request),
             ErrorsPdd(self.request),
@@ -285,13 +281,16 @@ class Errors(PddContextMixin, TemplateView):
         context = super(Errors, self).get_context_data(**kwargs)
         errors = ErrorsPdd(self.request)
         errors_keys = errors.errors.keys()
-        context['errors'] = len(errors_keys)
-        try:
+        errors_number = len(errors_keys)
+        context['errors'] = errors_number
+        try: 
             context['pk'] = errors_keys.pop()
+            print 'context[ "pk" ] = ', context['pk']
         except IndexError:
             context['pk'] = None
         self.request.session['nav_tab'] = 'errors'
         self.request.session['errors_list'] = errors_keys
+        self.request.session['grey_stars'] = errors_number
         return context
 
 
