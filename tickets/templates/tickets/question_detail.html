@@ -1,4 +1,5 @@
 {% extends "base/__base.html" %}
+{% load static %}
 
 {% block progressbar %}
 {% include 'base/includes/_star_progress_bar.html' %}
@@ -12,7 +13,7 @@
 	<div class="col-xs-6 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.id }}</button></div>
 	</div>
 	<br>
-	{% if question.image %}<img class="img-responsive" src="{{ question.image.url }}">{% endif %}
+	<img class="img-responsive" src="{% if question.image %}{{ question.image.url }}{% else %}{% static 'img/question_without_img.png' %}{% endif %}">
 	<br>
 	<p class="text-center"><strong>{{ question.question }}</strong></p>
 
