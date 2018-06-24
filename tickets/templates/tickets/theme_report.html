@@ -1,5 +1,5 @@
 {% extends "base/__base.html" %}
-{% load static %}
+
 
 {% block content %}
 
@@ -12,34 +12,8 @@
 
 
 {% for item in data %}
-	<div class="row">
-	<img class="img-responsive" src="{% if item.question_img %}{{ item.question_img }}{% else %}{% static 'img/question_without_img.png' %}{% endif %}">
 
-	<table class="table">
-	<tbody>
-		<thead>
-			<tr>
-				<th colspan="2" class="text-center">Вопрос: {{ item.question_text }}</th>
-			</tr>
-		</thead>
-		<tr>
-			<th>Ваш ответ:</th>
-			<td class="text-danger">{{ item.wrong_text }}</td>
-		</tr>
-		<tr>
-			<th>Правильный ответ:</th>
-			<td class="text-success">{{ item.right_text }}</td>
-		</tr>
-		<tr>
-			<th>Подсказка:</th>
-			<td></td>
-		</tr>
-	
-	</tbody>
-
-	</table>
-
-	
+	{% include 'tickets/includes/_report_item.html' %}
 
 {% endfor %}
 
