@@ -1,3 +1,4 @@
+pdd/settings/local.py
 uploads/
 db.sqlite3
 # Byte-compiled / optimized / DLL files
