@@ -9,12 +9,23 @@ from django.http import Http404
 
 DRIVE_CATEGORY = (('A, B, M', 'A, B, M'), ('C и Д', 'C и Д'))
 
+# THEME_CATEGORY = (
+#     'Общие положения',
+#     "Общиеобязанности водителей",
+#     "Обязанности пассажиров",
+# )
+
 
 class Ticket(models.Model):
     tick_number = models.IntegerField()
     drive_category = models.CharField(max_length = 500, choices = DRIVE_CATEGORY,)
 
-    
+
+    class Meta:
+        verbose_name = u'Билет'
+        verbose_name_plural = u'Билеты'
+
+
     def __unicode__(self):
         return 'Билет №'+str(self.tick_number)
 
@@ -41,7 +52,12 @@ class Ticket(models.Model):
 class Theme(models.Model):
     name = models.CharField(max_length = 500,)
 
-    
+
+    class Meta:
+        verbose_name = u'Тема'
+        verbose_name_plural = u'Темы' 
+
+
     def __unicode__(self):
         return self.name
 
@@ -73,6 +89,7 @@ class Theme(models.Model):
 
 
 class Question(models.Model):
+ 
     ticket = models.ForeignKey(Ticket,
         related_name='questions',
         on_delete = models.CASCADE,
@@ -84,6 +101,11 @@ class Question(models.Model):
     image = models.ImageField(upload_to='tickets_img/',
                                 blank=True, null=True, default=None,)
     question = models.CharField(max_length = 1000,)
+
+
+    class Meta:
+        verbose_name = u'Вопрос'
+        verbose_name_plural = u'Вопросы'
 
 
     def __unicode__(self):
