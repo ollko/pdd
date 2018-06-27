@@ -7,6 +7,7 @@ from .views import (
     Errors,
     QuestionDetailView,
     MarathonTemplateView,
+    MarathonReportView,
     TicketListView,
     TicketReportView,
     ThemeListView,
@@ -26,9 +27,11 @@ urlpatterns = [
 
     url(r'^(?P<pk>[\d-]+)/pdddataAdd/$', pdddataAdd, name='pdddataAdd'),
     url(r'^clear/$', pdddataClear, name='pdddataClear'),
+    # url(r'^addTimer/$', addTimer, name='addTimer'),
 
     url(r'^errors_report/$', ErrorsReportView.as_view(), name='errors_report'),  
     url(r'^ticket_report/$', TicketReportView.as_view(), name='ticket_report'),
     url(r'^theme_report/$', ThemeReportView.as_view(), name='theme_report'),
+    url(r'^marathon_report/$', MarathonReportView.as_view(), name='theme_report'),
 
 ]

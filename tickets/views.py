@@ -41,7 +41,7 @@ class TicketListView(PddContextMixin, TemplateView):
             tick_item[ 'first_question_num' ] = ticket.get_first_question_num()
 
             ticket_with_result.append(tick_item)
-        print 'ticket_with_result = ',ticket_with_result
+        # print 'ticket_with_result = ',ticket_with_result
         context['tickets'] = ticket_with_result
         self.request.session['nav_tab'] = 'ticket'
         return context
@@ -114,15 +114,15 @@ def pdddataAdd(request, pk):
     if not user_choice == right_choice:
         wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
         right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
-        print 'было неправильных ответов= ',len(errors.errors)
+        # print 'было неправильных ответов= ',len(errors.errors)
         errors.add_data( question_id, wrong_text, right_text )
-        print 'неправильных ответов после добавления = ',len(errors.errors)
+        # print 'неправильных ответов после добавления = ',len(errors.errors)
         stars.add_data(question, data = 'red')
     else:
         if question_id in errors.errors.keys():
-            print 'было неправильных ответов= ',len(errors.errors)
+            # print 'было неправильных ответов= ',len(errors.errors)
             errors.remove_question_data( question_id )
-            print 'неправильных ответов после удаления = ',len(errors.errors)
+            # print 'неправильных ответов после удаления = ',len(errors.errors)
         stars.add_data(question, data = 'green')
 
     nav_tab = request.session['nav_tab']
@@ -130,10 +130,12 @@ def pdddataAdd(request, pk):
         question_id_list = question.get_question_id_list_in_ticket()
     elif nav_tab == 'theme':
         question_id_list = question.get_question_id_list_in_theme()
+    elif nav_tab == 'marathon':
+        question_id_list = request.session['marathon_list']
     elif nav_tab == 'errors':
-        errors_list = request.session['errors_list']
+        errors_list = request.session['marathon_list']
         try:
-            print 'errors_list=',errors_list
+            # print 'errors_list=',errors_list
             next_question_id = errors_list.pop()
             request.session['errors_list'] = errors_list
         except IndexError:
@@ -144,7 +146,11 @@ def pdddataAdd(request, pk):
     else:
         pass
     try:
+        print '22222222222  pk =', pk
+        print 'question_id_list=',question_id_list
         next_question_id = question_id_list[ question_id_list.index( int(pk) ) + 1 ]
+        print 'next_question_id=', next_question_id
+
     except IndexError:
         # пройдены все вопросы в билете -> записываем число правильных/неправильных вопросов
         # для отчета по билету
@@ -167,13 +173,21 @@ def pdddataAdd(request, pk):
             report.add_data(val, right, wrong)
             stars.clear()
             return redirect( '/tickets/theme_report?theme_id=' + theme_id )
-        
+        elif nav_tab == 'marathon':
+            val = 'marathon'
+            report.add_data(val, right, wrong)
+            stars.clear()
+            print 'nav_tab = ', 
+            print 'stars.stars = ', stars.stars
+            print 'report.report = ', report.report
+            return redirect( '/tickets/marathon_report' )
         else:
             return redirect( 'tickets:ticket_list' )
 
-        
-        
-    return redirect('tickets:question_detail', str(next_question_id))
+    print '333333333333333'        
+    next_question_obj = Question.objects.get( pk = next_question_id )
+    print '4444444444444'    
+    return redirect(next_question_obj)
     
 
 
@@ -307,9 +321,46 @@ class ErrorsReportView(TemplateView):
         return context
 
 
+class MarathonTemplateView(PddContextMixin, TemplateView):
+    template_name = 'tickets/marathon.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MarathonTemplateView, self).get_context_data(**kwargs)
+        m = Question.objects.values_list('id', flat=True).order_by('?')
+        marathon_list = []
+        for item in m:
+            marathon_list.append(item)
+        print 'marathon_list=', marathon_list        
+        self.request.session['nav_tab'] = 'marathon'
+        self.request.session['marathon_list'] = marathon_list
+        self.request.session['grey_stars'] = len(marathon_list)
+        context[ 'first_question_id' ] = marathon_list[ 0 ]
+        return context
+
+
+class MarathonReportView(TemplateView):
+    template_name = 'tickets/marathon_report.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(MarathonReportView, self).get_context_data(**kwargs)
+        stars, report = (
+            Stars(self.request),
+            Report(self.request),
+        )        
+        try:
+            marathon_report_data = report.report[ 'marathon' ]
+        except KeyError:
+            stars.clear()
+            raise Http404('Но вы еще не прошли марафон!')
+        context['right_ans'] = marathon_report_data[ 'right' ]
+        context['wrong_ans'] = marathon_report_data[ 'wrong' ]
+        return context
+
+
 class ExamTemplateView(PddContextMixin, TemplateView):
     template_name = 'tickets/exam.html'
 
 
-class MarathonTemplateView(PddContextMixin, TemplateView):
-    template_name = 'tickets/marathon.html'
+
