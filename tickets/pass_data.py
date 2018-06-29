@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from .models import Ticket, Question
+from datetime import datetime
 
 
 class ErrorsPdd(object):
@@ -106,4 +107,57 @@ class Stars(object):
 
     def clear(self):
         del self.session[settings.STAR_SESSION_ID]
+        self.session.modified = True
+
+
+class Timer(object):
+    def __init__(self, request):
+        self.session = request.session
+        timer = self.session.get(settings.TIMER_ID)
+        if not timer:
+            # Сохраняем объект данных пользователя в сессию
+            timer = self.session[settings.TIMER_ID] = { 
+                'start' : self.seconds_since_midnight(),
+                'suspend' : False,
+                'sleep_time': 0,
+                }
+        self.timer = timer
+        # print "self.timer['sleep_time']=",self.timer['sleep_time']
+
+    def seconds_since_midnight(self):
+        now = datetime.now()
+        return (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
+
+
+
+    def suspend(self):
+        print "suspend"
+        self.timer['suspend_time'] = self.seconds_since_midnight()
+        self.timer[ 'suspend' ] = True
+        self.save()
+
+
+    def run(self):
+        print "run"
+        self.timer['sleep_time'] += ( self.seconds_since_midnight() - self.timer[ 'suspend_time' ] )
+        del self.timer['suspend_time']
+        self.timer[ 'suspend' ] = False
+        self.save()
+
+
+    def get_timer_report(self):
+        sleep_time = self.timer.get('sleep_time', None)
+        result = (self.seconds_since_midnight() - ( self.timer[ 'start' ] + sleep_time ))
+        return result
+
+
+    # Сохранение данных в сессию
+    def save(self):
+        self.session[settings.TIMER_ID] = self.timer
+        # Указываем, что сессия изменена
+        self.session.modified = True
+
+
+    def clear(self):
+        del self.session[settings.TIMER_ID]
         self.session.modified = True

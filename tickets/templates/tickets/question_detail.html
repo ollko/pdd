@@ -8,6 +8,12 @@
 {% block content %}
 
 <br>
+	{% if nav_tab == 'marathon' %}
+	<div class='row'>
+		<a class="btn btn-primary my-suspend-timer-btn" data-url="{% url 'tickets:toggle_Timer' %}" href="#" role="button">Пауза</a>
+	</div>
+
+	{% endif %}
 	<div class="row">
 	<div class="col-xs-6 text-center"><button type="button" class="btn btn-primary btn-xs">Билет №{{ question.ticket.id }}</button></div>
 	<div class="col-xs-6 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.id }}</button></div>

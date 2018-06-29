@@ -3,7 +3,7 @@
 import re
 
 
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     DetailView, ListView, TemplateView,
@@ -18,7 +18,7 @@ from .models import (
     Theme,
     Choice,
     )
-from pass_data import Stars, Report, ErrorsPdd
+from pass_data import Stars, Report, ErrorsPdd, Timer
 from generic.mixins import PddContextMixin
 
 # self.report= {u'ticket_1': {u'wrong': 14, u'right': 6}, u'ticket_2': {'wrong': 1, 'right': 1}}
@@ -192,14 +192,16 @@ def pdddataAdd(request, pk):
 
 
 def pdddataClear(request):
-    stars, report, errors = (
+    stars, report, errors, timer = (
         Stars(request),
         Report(request),
         ErrorsPdd(request),
+        Timer(request),
     )
     stars.clear()
     report.clear()
     errors.clear()
+    timer.clear()
     return redirect('tickets:ticket_list')
 
 
@@ -335,7 +337,9 @@ class MarathonTemplateView(PddContextMixin, TemplateView):
         self.request.session['nav_tab'] = 'marathon'
         self.request.session['marathon_list'] = marathon_list
         self.request.session['grey_stars'] = len(marathon_list)
-        context[ 'first_question_id' ] = marathon_list[ 0 ]
+        timer = Timer(self.request)
+        timer.clear()
+        # context[ 'first_question_id' ] = marathon_list[ 0 ]
         return context
 
 
@@ -356,11 +360,30 @@ class MarathonReportView(TemplateView):
             raise Http404('Но вы еще не прошли марафон!')
         context['right_ans'] = marathon_report_data[ 'right' ]
         context['wrong_ans'] = marathon_report_data[ 'wrong' ]
+        timer = Timer(self.request)
+        context['time_for_test'] = timer.get_timer_report()
         return context
 
 
 class ExamTemplateView(PddContextMixin, TemplateView):
     template_name = 'tickets/exam.html'
 
+def start_Timer(request):
+    timer = Timer(request)
+    return redirect('tickets:question_detail',  
+        request.session['marathon_list'][ 0 ])
 
+
+def toggle_Timer(request):
+    if not request.is_ajax() or not request.method=='POST':
+        
+        return HttpResponseNotAllowed(['POST'])
+    else:
+        timer = Timer(request)
+        timer_state = timer.timer.get( 'suspend', None )
+        if timer_state:
+            timer.run() 
+        else:
+            timer.suspend()
+        return HttpResponse('Toggle ok!')
 

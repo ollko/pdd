@@ -65,7 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'tickets.context_processors.pdddata',
+                'tickets.context_processors.timer',
             ],
         },
     },
@@ -137,12 +137,10 @@ STATIC_ROOT = '/home/u64358/u64358.netangels.ru/www/static'
 STATIC_URL = '/static/'
 
 
-PDD_SESSION_ID = 'pdd'
-
 STAR_SESSION_ID = 'stars'
-
-THEME_SESSION_ID = 'themedata'
 
 REPORT_SESSION_ID = 'report'
 
 PDD_ERRORS_SESSION_ID = 'errors'
+
+TIMER_ID = 'timer'

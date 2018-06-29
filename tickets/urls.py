@@ -10,6 +10,11 @@ from .views import (
     MarathonReportView,
     TicketListView,
     TicketReportView,
+
+    toggle_Timer,
+    start_Timer,
+    # timer_Report,
+
     ThemeListView,
     ThemeReportView,
     pdddataAdd,
@@ -27,7 +32,9 @@ urlpatterns = [
 
     url(r'^(?P<pk>[\d-]+)/pdddataAdd/$', pdddataAdd, name='pdddataAdd'),
     url(r'^clear/$', pdddataClear, name='pdddataClear'),
-    # url(r'^addTimer/$', addTimer, name='addTimer'),
+    url(r'^start_timer/$', start_Timer, name='start_Timer'),
+    url(r'^toggle_timer/$', toggle_Timer, name='toggle_Timer'),  
+    # url(r'^timer_report/$', timer_Report, name='timer_Report'),
 
     url(r'^errors_report/$', ErrorsReportView.as_view(), name='errors_report'),  
     url(r'^ticket_report/$', TicketReportView.as_view(), name='ticket_report'),

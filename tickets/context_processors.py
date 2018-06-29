@@ -1,6 +1,5 @@
-from .pass_data import Pdddata
+from .pass_data import Timer
 
 
-def pdddata(request):
-	p = Pdddata(request)
-	return {'pdddata': Pdddata(request)}
+def timer(request):
+	return {'timer': Timer(request)}
