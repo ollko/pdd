@@ -84,7 +84,9 @@
 
     <script>$(document).ready(function(){
 
-      $(".pdd-pass-button").click(function(){
+    // Проверка ответов вопроса
+      $(".pdd-check-button").click(function(){
+
         var checked_groupe = false
         $('.pdd-ticket-input').each(function(){
           if ( $(this).prop( "checked" ) ) {
@@ -93,14 +95,16 @@
         });
 
         if (checked_groupe === true) {
+          var $questionAnswerBlock = $('.pdd-question-answer-block');
+          $questionAnswerBlock.addClass( "pdd-passed-question" );
+
           $(".pdd-label").each(function(){
             $(this).addClass( "pdd-pass-question" )
           });
-          $(".pdd-pass-button").css( "display", "none" );
+          $(".pdd-check-button").css( "display", "none" );
           $(".pdd-next-button").css( "display", "inline-block" );
 
-          // $('input.pdd-ticket-input').attr('disabled', "disabled");
-
+      // Окраска звездочек серых звездочек зеленый
           var checkedInput = $('.pdd-ticket-input:checked');
           var rightChoice = $('input.right-ans');
           var firstGreyStar = $('span.grey-star-1');
@@ -117,15 +121,12 @@
       rightChoiceValue = $('input.right-ans').attr('value');
       firstGreyStar = $('span.grey-star-1')
 
-
-  var $mySuspendBtn = $(".my-suspend-timer-btn")
+// Таймер (марафон)
+  var $mySuspendBtn = $(".my-suspend-timer-btn");
+  var $pddTicketInput = $(".pdd-ticket-input");
+  var $nextButton = $(".pdd-next-button");
+  var $checkButton = $(".pdd-check-button");
     $mySuspendBtn.click(function(event){
-
-      // console.log($(this).val());
-
-      // $(".spread").toggle();
-      // $(this).val( $(this).val() == 'Hide Spreads' ? 'Show Spreads' : 'Hide Spreads' );
-
       var $endpoint = $mySuspendBtn.attr('data-url') 
       
       $.ajax({
@@ -135,14 +136,18 @@
         success: handleSuccess,
         error: handleError,
       })
+
       function handleSuccess(textStatus, jqXHR){
         
         console.log(textStatus)
         console.log(jqXHR)
 
-           $mySuspendBtn.text('Запустить')
-
-
+        console.log($(".pdd-ticket-input"));   
+        $mySuspendBtn.text( $mySuspendBtn.text() == 'Пауза' ? 'Продолжить Марафон' : 'Пауза' );
+        console.log($pddTicketInput);
+        $pddTicketInput.toggleClass('pdd-toggle-pointer-events');
+        $nextButton.toggleClass('pdd-toggle-pointer-events');
+        $checkButton.toggleClass('pdd-toggle-pointer-events');
       }
 
       function handleError(jqXHR, textStatus, errorThrown){
@@ -150,9 +155,7 @@
         console.log(textStatus)
         console.log(errorThrown)
       }
-
     })
-
 })
 
   

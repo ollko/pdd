@@ -3,7 +3,7 @@
 import re
 
 
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     DetailView, ListView, TemplateView,

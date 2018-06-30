@@ -24,15 +24,19 @@
 	<p class="text-center"><strong>{{ question.question }}</strong></p>
 
 
-	<form action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
+	<form  action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
 	{% csrf_token %}
 	{% for choice in question.choice_set.all %}
-	   <input class="pdd-ticket-input {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" id="choice{{ forloop.counter }}" type="radio" name="choice" value="{{ choice.id }}" />
-
-	    <label class="pdd-label {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+	<div class="pdd-question-answer-block">
+			<input class="pdd-ticket-input {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" id="choice{{ forloop.counter }}" type="radio" name="choice" value="{{ choice.id }}" />
+			<label class="pdd-label {% if choice.choice_status %}right-ans{% else %}wrong-ans{% endif %}" for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>		
+		<br />	
+	</div>
+	   
+	    
 	{% endfor %}
 	<br>
-		<input class="btn btn-primary pdd-pass-button" type="button" value="Проверить">		
+		<input class="btn btn-primary pdd-check-button" type="button" value="Проверить">		
 		<input type="submit" class="btn btn-primary pdd-next-button" style="display:none"  value="Дальше">
 		<input class="btn btn-warning" type="button" value="Подсказка">
 	</form>

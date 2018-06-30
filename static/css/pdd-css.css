@@ -18,10 +18,14 @@ input[type="radio"]:checked + .pdd-label.wrong-ans.pdd-pass-question {
     color: red;
    }
 
+.pdd-pass-question + input[type="radio"]{
+  pointer-events: none;
+}
+
 .pdd-progress-nav{
 	font-size: 2em;
 }
 
-/*.nav-tabs>li>a {
-    background-color: cornsilk;
-}*/
+.pdd-toggle-pointer-events, .pdd-passed-question{
+  pointer-events: none;
+}
