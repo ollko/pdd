@@ -8,7 +8,13 @@ from django.shortcuts import get_list_or_404
 from django.http import Http404
 
 DRIVE_CATEGORY = (('A, B, M', 'A, B, M'), ('C и Д', 'C и Д'))
+QUESTION_NUMBER = ( 
+    (1, '1',), (2, '2',), (3,'3',), (4, '4',), (5, '5',),
+    (6, '6',), (7,'7',), (8, '8',), (9, '9',), (10, '10',),
+    (11, '11',), (12, '12',), (13,'13',), (14, '14',), (15, '15',),
+    (16, '16',), (17,'17',), (18, '18',), (19, '19',), (20, '20',),
 
+)
 # THEME_CATEGORY = (
 #     'Общие положения',
 #     "Общиеобязанности водителей",
@@ -17,8 +23,8 @@ DRIVE_CATEGORY = (('A, B, M', 'A, B, M'), ('C и Д', 'C и Д'))
 
 
 class Ticket(models.Model):
-    tick_number = models.IntegerField()
-    drive_category = models.CharField(max_length = 500, choices = DRIVE_CATEGORY,)
+    tick_number = models.IntegerField('№ билета')
+    drive_category = models.CharField('Категория вождения', max_length = 500, choices = DRIVE_CATEGORY,)
 
 
     class Meta:
@@ -27,7 +33,7 @@ class Ticket(models.Model):
 
 
     def __unicode__(self):
-        return 'Билет №'+str(self.tick_number)
+        return str(self.tick_number)
 
 
     def get_absolute_url(self):
@@ -50,7 +56,7 @@ class Ticket(models.Model):
 
 
 class Theme(models.Model):
-    name = models.CharField(max_length = 500,)
+    name = models.CharField('Тема', max_length = 500,)
 
 
     class Meta:
@@ -89,18 +95,20 @@ class Theme(models.Model):
 
 
 class Question(models.Model):
- 
+    question_number = models.IntegerField("№ вопроса", choices = QUESTION_NUMBER ) 
     ticket = models.ForeignKey(Ticket,
+        verbose_name = '№ билета',
         related_name='questions',
         on_delete = models.CASCADE,
         )
     theme = models.ForeignKey(Theme,
+        verbose_name = 'тема',
         related_name='questions',
         on_delete = models.CASCADE,
         )
-    image = models.ImageField(upload_to='tickets_img/',
+    image = models.ImageField('Картинка', upload_to='tickets_img/',
                                 blank=True, null=True, default=None,)
-    question = models.CharField(max_length = 1000,)
+    question = models.CharField('Вопрос', max_length = 1000,)
 
 
     class Meta:
@@ -109,7 +117,7 @@ class Question(models.Model):
 
 
     def __unicode__(self):
-        return 'Вопрос №%s (%s)' % (str(self.id), self.theme.name,)
+        return 'Вопрос %s ' % str(self.question_number)
 
     def get_absolute_url(self):
         return reverse('tickets:question_detail', args=[self.pk, ])
@@ -173,11 +181,12 @@ class Question(models.Model):
 
 class Choice(models.Model):
     question = models.ForeignKey(Question,
+        verbose_name = 'Вопрос',
         related_name='choice_set',
         on_delete = models.CASCADE,
         )
-    choice_text = models.CharField(max_length=1000)
-    choice_status = models.BooleanField(default = False)
+    choice_text = models.CharField('Вариант ответа', max_length=1000)
+    choice_status = models.BooleanField('Правильный ответ', default = False)
 
 
     def __unicode__(self):

@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.contrib import admin
 
 # Register your models here.
@@ -13,22 +14,22 @@ class ChoiceItemInline(admin.TabularInline):
     raw_id_field = ['question',
                     'choice_text',
                     'choice_status',]
-
+    
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display_links = ["question"]
-    # search_fields = ["ticket", "theme"]
+    search_fields = [ "theme__name", 'ticket__tick_number']
     list_display = (
-                    'id',
+                    'question_number',
+                    'ticket',                    
                     'question', 
-                    'ticket',
                     'theme',
                     )
 
-    fields =   ('ticket',
+    fields =   ('question_number',
+                'question', 
+                'ticket',
                 'theme',
-                'image',
-                'question',
                 )
 
     inlines = [ChoiceItemInline]

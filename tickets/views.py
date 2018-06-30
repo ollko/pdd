@@ -31,8 +31,8 @@ class TicketListView(PddContextMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(TicketListView, self).get_context_data(*args, **kwargs) 
         report = Report(self.request).report
-        stars = Stars(self.request)
-        stars.clear()
+        # stars = Stars(self.request)
+        # stars.clear()
         tickets = Ticket.objects.all()
         ticket_with_result = []
         for ticket in tickets:
@@ -44,7 +44,10 @@ class TicketListView(PddContextMixin, TemplateView):
         # print 'ticket_with_result = ',ticket_with_result
         context['tickets'] = ticket_with_result
         self.request.session['nav_tab'] = 'ticket'
+        stars = Stars(self.request)
+        stars.clear()       
         return context
+
 
 class ThemeListView(PddContextMixin, TemplateView):
     template_name = 'tickets/theme_list.html'
@@ -52,7 +55,7 @@ class ThemeListView(PddContextMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(ThemeListView, self).get_context_data(*args, **kwargs)
         report = Report(self.request).report
-        stars = Stars(self.request)
+        # stars = Stars(self.request)
         themes = Theme.objects.all()
         theme_with_result = []
         for theme in themes:
@@ -64,6 +67,8 @@ class ThemeListView(PddContextMixin, TemplateView):
             theme_with_result.append(theme_item)
         context['themes'] = theme_with_result
         self.request.session['nav_tab'] = 'theme'
+        stars = Stars(self.request)
+        stars.clear()
         return context
 
 
@@ -245,7 +250,9 @@ class TicketReportView(TemplateView):
         
         context['data'] = data
         context['nav_tab'] = self.request.session['nav_tab']
+        stars.clear()
         return context
+
 
 class ThemeReportView(TemplateView):
     template_name = 'tickets/theme_report.html'
@@ -286,6 +293,7 @@ class ThemeReportView(TemplateView):
             data.append( errors.errors[ item ] )       
         context['data'] = data
         context['nav_tab'] = self.request.session['nav_tab']
+        stars.clear()
         return context
 
 
@@ -307,6 +315,8 @@ class Errors(PddContextMixin, TemplateView):
         self.request.session['nav_tab'] = 'errors'
         self.request.session['errors_list'] = errors_keys
         self.request.session['grey_stars'] = errors_number
+        stars = Stars(self.request)
+        stars.clear()
         return context
 
 
@@ -320,6 +330,8 @@ class ErrorsReportView(TemplateView):
         errors_keys = errors.errors.keys()
         context['wrong_ans'] = len(errors_keys)
         context['nav_tab'] = self.request.session['nav_tab']
+        stars = Stars(self.request)
+        stars.clear()
         return context
 
 
@@ -339,7 +351,8 @@ class MarathonTemplateView(PddContextMixin, TemplateView):
         self.request.session['grey_stars'] = len(marathon_list)
         timer = Timer(self.request)
         timer.clear()
-        # context[ 'first_question_id' ] = marathon_list[ 0 ]
+        stars = Stars(self.request)
+        stars.clear()
         return context
 
 
@@ -362,11 +375,19 @@ class MarathonReportView(TemplateView):
         context['wrong_ans'] = marathon_report_data[ 'wrong' ]
         timer = Timer(self.request)
         context['time_for_test'] = timer.get_timer_report()
+        stars.clear()
         return context
 
 
 class ExamTemplateView(PddContextMixin, TemplateView):
     template_name = 'tickets/exam.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ExamTemplateView, self).get_context_data(**kwargs)    
+        stars = Stars(self.request)
+        stars.clear()
+        return context
 
 def start_Timer(request):
     timer = Timer(request)
