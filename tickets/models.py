@@ -95,7 +95,7 @@ class Theme(models.Model):
 
 
 class Question(models.Model):
-    question_number = models.IntegerField("№ вопроса", choices = QUESTION_NUMBER ) 
+    question_number = models.IntegerField("№ вопроса", choices = QUESTION_NUMBER, default = 1 ) 
     ticket = models.ForeignKey(Ticket,
         verbose_name = '№ билета',
         related_name='questions',
