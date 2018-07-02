@@ -134,14 +134,14 @@ class Timer(object):
 
 
     def suspend(self):
-        print "suspend"
+        # print "suspend"
         self.timer['suspend_time'] = self.seconds_since_midnight()
         self.timer[ 'suspend' ] = True
         self.save()
 
 
     def run(self):
-        print "run"
+        # print "run"
         self.timer['sleep_time'] += ( self.seconds_since_midnight() - self.timer[ 'suspend_time' ] )
         del self.timer['suspend_time']
         self.timer[ 'suspend' ] = False
@@ -149,7 +149,7 @@ class Timer(object):
 
 
     def stop(self):
-        print "stop"
+        # print "stop"
         self.timer['stop_time'] = self.seconds_since_midnight()
         self.save()
 
@@ -161,11 +161,14 @@ class Timer(object):
         res = timedelta(seconds=result_in_seconds)
         days = res.days
         seconds = res.seconds
-        print 'seconds = ', seconds
         hours = seconds // 3600
         minutes = (seconds % 3600) // 60
         sec = (seconds % 3600) % 60
-        result = ( days, hours, minutes, sec )
+        if result_in_seconds / ( 60. ) < 20:
+            exam_status = False
+        else:
+            exam_status = True
+        result = ( days, hours, minutes, sec, exam_status )
         return result
 
 

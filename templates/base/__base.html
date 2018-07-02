@@ -98,16 +98,13 @@
           var $questionAnswerBlock = $('.pdd-question-answer-block');
           $questionAnswerBlock.addClass( "pdd-passed-question" );
 
-          // $(".pdd-check-button").css( "display", "none" );
-          // $(".pdd-next-button").css( "display", "inline-block" );
-
           $(".pdd-label").each(function(){
             $(this).addClass( "pdd-pass-question" )
           });
           $(".pdd-check-button").css( "display", "none" );
           $(".pdd-next-button").css( "display", "inline-block" );
 
-      // Окраска звездочек серых звездочек зеленый
+      // Окраска серых звездочек зеленый/красный
           var checkedInput = $('.pdd-ticket-input:checked');
           var rightChoice = $('input.right-ans');
           var firstGreyStar = $('span.grey-star-1');
@@ -143,11 +140,8 @@
       function handleSuccess(textStatus, jqXHR){
         
         console.log(textStatus)
-        console.log(jqXHR)
-
-        console.log($(".pdd-ticket-input"));   
+        console.log(jqXHR)  
         $mySuspendBtn.text( $mySuspendBtn.text() == 'Пауза' ? 'Продолжить Марафон' : 'Пауза' );
-        console.log($pddTicketInput);
         $pddTicketInput.toggleClass('pdd-toggle-pointer-events');
         $nextButton.toggleClass('pdd-toggle-pointer-events');
         $checkButton.toggleClass('pdd-toggle-pointer-events');

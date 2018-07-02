@@ -2,15 +2,12 @@
 
 import re
 
-
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import (
     DetailView, ListView, TemplateView,
     )
-# from django.views.generic.edit import FormMixin
 from django.views.decorators.http import require_POST
-
 
 from .models import (
     Ticket,
@@ -21,18 +18,13 @@ from .models import (
 from pass_data import Stars, Report, ErrorsPdd, Timer
 from generic.mixins import PddContextMixin
 
-# self.report= {u'ticket_1': {u'wrong': 14, u'right': 6}, u'ticket_2': {'wrong': 1, 'right': 1}}
-
 
 class TicketListView(PddContextMixin, TemplateView):
     template_name = 'tickets/ticket_list.html'
 
-
     def get_context_data(self, *args, **kwargs):
         context = super(TicketListView, self).get_context_data(*args, **kwargs) 
         report = Report(self.request).report
-        # stars = Stars(self.request)
-        # stars.clear()
         tickets = Ticket.objects.all()
         ticket_with_result = []
         for ticket in tickets:
@@ -41,7 +33,6 @@ class TicketListView(PddContextMixin, TemplateView):
             tick_item[ 'first_question_num' ] = ticket.get_first_question_num()
 
             ticket_with_result.append(tick_item)
-        # print 'ticket_with_result = ',ticket_with_result
         context['tickets'] = ticket_with_result
         self.request.session['nav_tab'] = 'ticket'
         stars = Stars(self.request)
@@ -55,7 +46,6 @@ class ThemeListView(PddContextMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(ThemeListView, self).get_context_data(*args, **kwargs)
         report = Report(self.request).report
-        # stars = Stars(self.request)
         themes = Theme.objects.all()
         theme_with_result = []
         for theme in themes:
@@ -77,7 +67,6 @@ class QuestionDetailView(DetailView):
     template_name = 'tickets/question_detail.html'  
     context_object_name = 'question'
 
-
     def get_context_data(self, *args, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(*args, **kwargs)
         stars = Stars( self.request )
@@ -98,12 +87,14 @@ class QuestionDetailView(DetailView):
 @require_POST
 def pdddataAdd(request, pk):
      # pk - pk вопроса
+     
     def count_red_in_exam_errors( stars_list ):
         res = 0
         for i in stars_list:
             if i == 'red':
                 res += 1
         return res
+
 
     def get_additional_questions( question, question_id_list ):
         theme_id = question.theme.id
@@ -137,8 +128,6 @@ def pdddataAdd(request, pk):
         question = get_object_or_404( Question, pk = pk )
         user_choice = int(request.POST['choice'])
         right_choice = question.get_right_choice
-        print 'question_id_list = ', question_id_list
-        print 'pk = ', pk
         pk_index = question_id_list.index( int(pk) )
     # если ответ не правильный 
         if not user_choice == right_choice:
@@ -146,8 +135,7 @@ def pdddataAdd(request, pk):
             # подсчитываем ошибки:
             red_stars = count_red_in_exam_errors( stars.stars )
             
-            # экзамен сдан
-            
+            # экзамен сдан           
             if pk_index == 24  and red_stars == 1:
                 report.add_data( 'exam',  24, 1 )               
                 timer.stop()
@@ -160,15 +148,11 @@ def pdddataAdd(request, pk):
                 return redirect( '/tickets/exam_report' )
             # экзамен не сдан  
             elif pk_index < 20  and red_stars == 3:
-                # print 'pk_index < 20 and red_stars == 3'
-                # print 'stars.stars = ', stars.stars
                 report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
                 timer.stop()
                 request.session['exam_result'] = 'Экзамен не сдан.'
                 return redirect( '/tickets/exam_report' )
             elif pk_index >= 20  and red_stars == 2:
-                # print 'pk_index >= 20  and red_stars == 2'
-                # print 'stars.stars = ', stars.stars
                 report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
                 timer.stop()
                 request.session['exam_result'] = 'Экзамен не сдан.'
@@ -250,15 +234,10 @@ def pdddataAdd(request, pk):
             stars.clear()
             return redirect( '/tickets/errors_report')
         return redirect('tickets:question_detail', str(next_question_id))
-
     else:
         pass
     try:
-        print '22222222222  pk =', pk
-        print 'question_id_list=',question_id_list
         next_question_id = question_id_list[ question_id_list.index( int(pk) ) + 1 ]
-        print 'next_question_id=', next_question_id
-
     except IndexError:
         # пройдены все вопросы в билете -> записываем число правильных/неправильных вопросов
         # для отчета по билету
@@ -285,17 +264,11 @@ def pdddataAdd(request, pk):
             val = 'marathon'
             report.add_data(val, right, wrong)
             stars.clear()
-            print 'nav_tab = ', 
-            print 'stars.stars = ', stars.stars
-            print 'report.report = ', report.report
             timer.stop()
             return redirect( '/tickets/marathon_report' )
         else:
-            return redirect( 'tickets:ticket_list' )
-
-    print '333333333333333'        
+            return redirect( 'tickets:ticket_list' )       
     next_question_obj = Question.objects.get( pk = next_question_id )
-    print '4444444444444'    
     return redirect(next_question_obj)
     
 
@@ -383,10 +356,8 @@ class ThemeReportView(TemplateView):
         # данные для сводки правильный/неправильный ответ
         question_id_with_error = set( errors.errors.keys() )
         question_in_current_theme = set( theme.get_question_id_list_in_theme())
-        # print 'question_id_with_error = ',question_id_with_error
-        # print 'question_in_current_theme = ',question_in_current_theme
         current_question_wrong_answers = question_id_with_error & question_in_current_theme
-        # print 'current_question_wrong_answers = ',current_question_wrong_answers
+
         data = []
         for item in current_question_wrong_answers:
             question = Question.objects.get( pk = item )
@@ -431,7 +402,6 @@ class ErrorsReportView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ErrorsReportView, self).get_context_data(**kwargs)
         errors = ErrorsPdd(self.request)
-        print 'errors.errors = ', errors.errors
         errors_keys = errors.errors.keys()
         context['wrong_ans'] = len(errors_keys)
         context['nav_tab'] = self.request.session['nav_tab']
@@ -449,8 +419,7 @@ class MarathonTemplateView(PddContextMixin, TemplateView):
         m = Question.objects.values_list('id', flat=True).order_by('?')
         marathon_list = []
         for item in m:
-            marathon_list.append(item)
-        print 'marathon_list=', marathon_list        
+            marathon_list.append(item)       
         self.request.session['nav_tab'] = 'marathon'
         self.request.session['marathon_list'] = marathon_list
         self.request.session['grey_stars'] = len(marathon_list)
@@ -519,7 +488,6 @@ class ExamTemplateView(PddContextMixin, TemplateView):
         exam_question_list = []
         for item in exam_question_id_list:
             exam_question_list.append(item)
-        print 'exam_question_list = ',exam_question_list
         self.request.session['nav_tab'] = 'exam'
         self.request.session['exam_question_list'] = exam_question_list
         self.request.session['grey_stars'] = 20
@@ -534,7 +502,6 @@ class ExamTemplateView(PddContextMixin, TemplateView):
 def start_Timer(request):
     timer = Timer(request)
     nav_tab = request.session.get( 'nav_tab', 'marathon' )
-    print 'nav_tab = ', nav_tab
     if nav_tab == 'exam':
         return redirect('tickets:question_detail', request.session['exam_question_list'][ 0 ])
     else:
