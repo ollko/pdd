@@ -1,9 +1,15 @@
 {% extends "base/__base.html" %}
 
 {% block content %}
-
-
-<h1 class="text-center">Экзамен</h1>
-
-
+<br>
+<div class="alert alert-success" role="alert">
+	<p>Итак, раз вы на страницах моего сервиса, то дайте я попробую угадать, вы наверно собираетесь обзавестись правами, а может просто решили освежить свои знания в <strong>теории по ПДД</strong>? Так или иначе мой сервис будет вам полезен в любом случае!!!</p>
+	<p>Сейчас вы находитесь на вкладке Экзамен, если вы уже готовы попытаться пройти тестирование на знание <strong>правил дорожного движения</strong>, то жмякайте кнопку ПОЕХАЛИ!</p>
+</div>	
+<p class="text-center"><strong>На экзамен даётся 20 минут. </strong></p>
+<p class="text-center"><strong>Внимательно читайте каждый вопрос и все варианты ответов.</strong></p>
+<p class="text-center"><strong>Не торопитесь. Удачи!</strong></p>
+<p class="text-center">
+	<a class="btn btn-primary" href="{% url 'tickets:start_Timer' %}" role="button">ПОЕХАЛИ!</a>
+</p>
 {% endblock content %}

@@ -80,13 +80,6 @@ class QuestionDetailView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(*args, **kwargs)
-
-        # if re.match(r'\/tickets\/\d+\/', self.request.path):
-        #     tab =  'tickets'
-        # else:
-        #     tab =  None
-        # context['tab'] = tab
-     
         stars = Stars( self.request )
         context['stars'] = stars.stars
         nav_tab = self.request.session.get('nav_tab')
@@ -105,40 +98,136 @@ class QuestionDetailView(DetailView):
 @require_POST
 def pdddataAdd(request, pk):
      # pk - pk вопроса
-    stars, report, errors = (
-        Stars(request),
-        Report(request),
-        ErrorsPdd(request),
-    )
+    def count_red_in_exam_errors( stars_list ):
+        res = 0
+        for i in stars_list:
+            if i == 'red':
+                res += 1
+        return res
 
-    question = get_object_or_404( Question, pk = pk )
-    user_choice = int(request.POST['choice'])
-    right_choice = question.get_right_choice
-    question_id = unicode( question.id )
+    def get_additional_questions( question, question_id_list ):
+        theme_id = question.theme.id
+        q = Question.objects.values_list( 'theme', 'id', )
+        all_question_with_current_theme = []
+        for item in q:
+            if item[ 0 ] == theme_id:
+                all_question_with_current_theme.append( item[ 1 ] )
 
-    if not user_choice == right_choice:
-        wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
-        right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
-        # print 'было неправильных ответов= ',len(errors.errors)
-        errors.add_data( question_id, wrong_text, right_text )
-        # print 'неправильных ответов после добавления = ',len(errors.errors)
-        stars.add_data(question, data = 'red')
-    else:
-        if question_id in errors.errors.keys():
-            # print 'было неправильных ответов= ',len(errors.errors)
-            errors.remove_question_data( question_id )
-            # print 'неправильных ответов после удаления = ',len(errors.errors)
-        stars.add_data(question, data = 'green')
+        set_get_additional_questions = set( all_question_with_current_theme ) - set( question_id_list )
+        if len( set_get_additional_questions ) < 5:
+            all_question_id_list = Question.objects.values_list( 'id', flat = True)
 
+            unused_questions = set(all_question_id_list) - set_get_additional_questions - set( question_id_list )
+            unused_questions_list = list( unused_questions )[ : 5 ]
+            additional_questions_list = list( set_get_additional_questions )
+            additional_questions_list.extend( unused_questions_list )
+            return additional_questions_list[ : 5 ] 
+        else:
+            return list(set_get_additional_questions)[ : 5 ]
+
+    
     nav_tab = request.session['nav_tab']
+    if nav_tab == 'exam':
+        question_id_list = request.session['exam_question_list']
+        stars, report, timer = (
+                Stars(request),
+                Report(request),
+                Timer(request),
+            )
+        question = get_object_or_404( Question, pk = pk )
+        user_choice = int(request.POST['choice'])
+        right_choice = question.get_right_choice
+        print 'question_id_list = ', question_id_list
+        print 'pk = ', pk
+        pk_index = question_id_list.index( int(pk) )
+    # если ответ не правильный 
+        if not user_choice == right_choice:
+            stars.add_data(question, data = 'red')
+            # подсчитываем ошибки:
+            red_stars = count_red_in_exam_errors( stars.stars )
+            
+            # экзамен сдан
+            
+            if pk_index == 24  and red_stars == 1:
+                report.add_data( 'exam',  24, 1 )
+                return redirect( '/tickets/exam_report' )
+            elif pk_index == 29  and red_stars == 2:
+                report.add_data( 'exam',  28, 2 )
+                return redirect( '/tickets/exam_report' )
+            # экзамен не сдан  
+            elif pk_index < 20  and red_stars == 3:
+                print 'pk_index < 20 and red_stars == 3'
+                print 'stars.stars = ', stars.stars
+                report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
+                return redirect( '/tickets/exam_report' )
+            elif pk_index >= 20  and red_stars == 2:
+                print 'pk_index >= 20  and red_stars == 2'
+                print 'stars.stars = ', stars.stars
+                report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
+                return redirect( '/tickets/exam_report' )
+            # добавление 5ти вопросов и продолжение экзамена
+            elif(len(question_id_list) == 20 and red_stars == 1) or (len(question_id_list) == 25 and red_stars == 2):
+
+                additional_question_list = get_additional_questions( question, question_id_list )
+                question_id_list.extend(additional_question_list)
+                request.session['exam_question_list'] = question_id_list
+                request.session['grey_stars'] += 5
+                next_question_id = question_id_list[ pk_index + 1 ]
+                return redirect( 'tickets:question_detail', str(next_question_id) )    
+            else:
+                pass
+        # если ответ правильный 
+        else:
+            stars.add_data(question, data = 'green')
+            red_stars = count_red_in_exam_errors( stars.stars )
+            # ответ правильный, экзамен сдан:
+            if pk_index == 19  and red_stars == 0:
+                report.add_data( 'exam',  20, 0 )
+                return redirect( '/tickets/exam_report' )
+            elif pk_index == 24  and red_stars == 1:
+                report.add_data( 'exam',  24, 1 )
+                return redirect( '/tickets/exam_report' )
+            elif pk_index == 29  and red_stars == 2:
+                report.add_data( 'exam',  29, 2 )
+                return redirect( '/tickets/exam_report' )
+            # ответ правильный, экзамен продолжается:
+            else:
+                next_question_id = question_id_list[ pk_index + 1 ]
+                return redirect('tickets:question_detail', str(next_question_id))
+
+    if nav_tab == 'ticket' or nav_tab == 'theme' or nav_tab == 'marathon' or nav_tab == 'errors' :
+        stars, report, errors , timer = (
+            Stars(request),
+            Report(request),
+            ErrorsPdd(request),
+            Timer(request),
+        )
+
+        question = get_object_or_404( Question, pk = pk )
+        user_choice = int(request.POST['choice'])
+        right_choice = question.get_right_choice
+        question_id = unicode( question.id )
+
+        if not user_choice == right_choice:
+            wrong_text = get_object_or_404( Choice, pk = user_choice ).choice_text
+            right_text = get_object_or_404( Choice, pk = right_choice ).choice_text
+            errors.add_data( question_id, wrong_text, right_text )
+            stars.add_data(question, data = 'red')
+        else:
+            if question_id in errors.errors.keys():
+                errors.remove_question_data( question_id )
+            stars.add_data(question, data = 'green')
+
+    
     if nav_tab == 'ticket':
         question_id_list = question.get_question_id_list_in_ticket()
     elif nav_tab == 'theme':
         question_id_list = question.get_question_id_list_in_theme()
     elif nav_tab == 'marathon':
         question_id_list = request.session['marathon_list']
+    
     elif nav_tab == 'errors':
-        errors_list = request.session['marathon_list']
+        errors_list = request.session['errors_list']
         try:
             # print 'errors_list=',errors_list
             next_question_id = errors_list.pop()
@@ -185,6 +274,7 @@ def pdddataAdd(request, pk):
             print 'nav_tab = ', 
             print 'stars.stars = ', stars.stars
             print 'report.report = ', report.report
+            timer.stop()
             return redirect( '/tickets/marathon_report' )
         else:
             return redirect( 'tickets:ticket_list' )
@@ -327,6 +417,7 @@ class ErrorsReportView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ErrorsReportView, self).get_context_data(**kwargs)
         errors = ErrorsPdd(self.request)
+        print 'errors.errors = ', errors.errors
         errors_keys = errors.errors.keys()
         context['wrong_ans'] = len(errors_keys)
         context['nav_tab'] = self.request.session['nav_tab']
@@ -356,7 +447,7 @@ class MarathonTemplateView(PddContextMixin, TemplateView):
         return context
 
 
-class MarathonReportView(TemplateView):
+class MarathonReportView(PddContextMixin, TemplateView):
     template_name = 'tickets/marathon_report.html'
 
 
@@ -374,8 +465,25 @@ class MarathonReportView(TemplateView):
         context['right_ans'] = marathon_report_data[ 'right' ]
         context['wrong_ans'] = marathon_report_data[ 'wrong' ]
         timer = Timer(self.request)
+        
         context['time_for_test'] = timer.get_timer_report()
+        context['timer'] = timer.timer
+        context['nav_tab'] = self.request.session['nav_tab']
         stars.clear()
+        return context
+
+
+class ExamReportView(PddContextMixin, TemplateView):
+    template_name = 'tickets/exam_report.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ExamReportView, self).get_context_data(**kwargs)    
+        stars = Stars(self.request)
+        stars.clear()
+        report = Report(self.request)
+        context[ 'wrong_ans' ] = report.report[ 'exam' ][ 'wrong' ]
+        context[ 'right_ans' ] = report.report[ 'exam' ][ 'right' ]
         return context
 
 
@@ -385,14 +493,32 @@ class ExamTemplateView(PddContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ExamTemplateView, self).get_context_data(**kwargs)    
+        t = Ticket.objects.values_list( 'id', flat = True ).order_by( '?' ).first()
+        exam_question_id_list = Question.objects.filter( ticket = t ).values_list( 'id', flat = True ).order_by( '?' )
+        
+        exam_question_list = []
+        for item in exam_question_id_list:
+            exam_question_list.append(item)
+        print 'exam_question_list = ',exam_question_list
+        self.request.session['nav_tab'] = 'exam'
+        self.request.session['exam_question_list'] = exam_question_list
+        self.request.session['grey_stars'] = 20
+
+        timer = Timer(self.request)
+        timer.clear()
         stars = Stars(self.request)
         stars.clear()
         return context
 
+
 def start_Timer(request):
     timer = Timer(request)
-    return redirect('tickets:question_detail',  
-        request.session['marathon_list'][ 0 ])
+    nav_tab = request.session.get( 'nav_tab', 'marathon' )
+    print 'nav_tab = ', nav_tab
+    if nav_tab == 'exam':
+        return redirect('tickets:question_detail', request.session['exam_question_list'][ 0 ])
+    else:
+        return redirect('tickets:question_detail', request.session['marathon_list'][ 0 ])
 
 
 def toggle_Timer(request):

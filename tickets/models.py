@@ -114,13 +114,25 @@ class Question(models.Model):
     class Meta:
         verbose_name = u'Вопрос'
         verbose_name_plural = u'Вопросы'
-
+        ordering = ['question_number']
 
     def __unicode__(self):
         return 'Вопрос %s ' % str(self.question_number)
 
+
     def get_absolute_url(self):
         return reverse('tickets:question_detail', args=[self.pk, ])
+
+
+    def get_remaining(self):
+        question_id_list_in_ticket = self.get_question_id_list_in_ticket()
+        print 'question_id_list_in_ticket = ',question_id_list_in_ticket
+        if not question_id_list_in_ticket:
+            return QUESTION_NUMBER
+        else:
+            return QUESTION_NUMBER
+
+
 
 
     @property

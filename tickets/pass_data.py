@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from .models import Ticket, Question
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class ErrorsPdd(object):
@@ -120,6 +120,9 @@ class Timer(object):
                 'start' : self.seconds_since_midnight(),
                 'suspend' : False,
                 'sleep_time': 0,
+
+
+
                 }
         self.timer = timer
         # print "self.timer['sleep_time']=",self.timer['sleep_time']
@@ -145,9 +148,24 @@ class Timer(object):
         self.save()
 
 
+    def stop(self):
+        print "stop"
+        self.timer['stop_time'] = self.seconds_since_midnight()
+        self.save()
+
+
     def get_timer_report(self):
         sleep_time = self.timer.get('sleep_time', None)
-        result = (self.seconds_since_midnight() - ( self.timer[ 'start' ] + sleep_time ))
+        stop_time = self.timer.get('stop_time', None)
+        result_in_seconds = (stop_time - ( self.timer[ 'start' ] + sleep_time ))
+        res = timedelta(seconds=result_in_seconds)
+        days = res.days
+        seconds = res.seconds
+        print 'seconds = ', seconds
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        sec = (seconds % 3600) % 60
+        result = ( days, hours, minutes, sec )
         return result
 
 

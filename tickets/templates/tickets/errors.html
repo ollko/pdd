@@ -2,15 +2,25 @@
 
 
 {% block content %}
-{{question_pk}}
-<h2 class="text-primary text-center">Работа над ошибками:</h2>
-<p class="text-center" >В данном разделе собираются ваши ошибки, которые вы сделали решая <strong>разделы «билеты, темы и марафон»</strong>. {% if pk %}Для того, чтобы исправить свои ошибки, нажмите на кнопку ниже.{% endif %}</p>
+<br>
+<div class="alert alert-info" role="alert">
+	<h2 class="text-primary text-center">Работа над ошибками:</h2>
+	<p class="text-center" >В данном разделе собираются ваши ошибки, которые вы сделали решая <strong>разделы «билеты, темы и марафон»</strong>. {% if pk %}Для того, чтобы исправить свои ошибки, нажмите на кнопку ниже.{% endif %}</p>
 
-<p class="text-center" style='bac'>Сейчас у вас {% if errors %}<span class="badge" style='background-color:red;'>{{ errors }}</span>{% else %} <strong>нет</strong>{% endif %} ошибок: </p>
+	<p class="text-center" style='bac'>Сейчас у вас {% if errors %}<span class="badge" style='background-color:red;'>{{ errors }}</span>{% else %} <strong>нет</strong>{% endif %} ошибок: </p>
+</div>
+
 <br>
 {% if pk %}
 <p class="text-center">
 	<a class="btn btn-primary" href="{% url 'tickets:question_detail' pk %}" role="button">Начать работу над ошибками</a>
 </p>
+<br>
+<div class="alert alert-success" role="alert">
+	<p>
+		Исправление ошибок в разделе «Ошибки» не влияет на общую статистику в блоке «билеты». Например, Вы решили первый билет и сделали в нём 3 ошибки, в блоке с билетом вы можете наблюдать 17 правильных и 3 неправильных. Зайдя в раздел «ошибки» Вы видите тоже 3 ошибки, прорешав и исправив их, они исчезнут только в разделе «ошибки». В вкладке «билеты» по прежнему Вы будете наблюдать, что в первом билете у вас допущено 3 ошибки. Это сделано для визуальной ориентации, чтобы вы понимали где вы допускали ошибки.
+	</p>
+</div>
+
 {% endif %}
 {% endblock content %}

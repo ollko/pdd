@@ -1,0 +1,13 @@
+{% extends "base/__base.html" %}
+
+{% block content %}
+
+
+<h2 class="text-primary text-center">Ваш результат: {{ exam_status }}</h2>
+
+<p class="text-center" style='bac'>Правильных ответов: <span class="badge" style='background-color:green;'>{{ right_ans }}</span></p>
+<p class="text-center">Сделали ошибок: <span class="badge" style='background-color:red;'>{{ wrong_ans }}</span></p>
+
+<p class="text-center">Время выполнения: <span class="badge" style='background-color:blue;'>{{ time_for_test.2 }} мин., {{ time_for_test.3 }} сек.  </span></p>
+
+{% endblock content %}
