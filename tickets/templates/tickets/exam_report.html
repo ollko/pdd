@@ -2,8 +2,8 @@
 
 {% block content %}
 <!-- {{ timer.timer }} -->
-
-<h2 class="text-primary text-center">Ваш результат: {{ exam_status }}</h2>
+<h2 class="text-primary text-center">{{ exam_result }}</h2>
+<h3 class="text-primary text-center">Ваш результат:</h3>
 
 <p class="text-center" style='bac'>Правильных ответов: <span class="badge" style='background-color:green;'>{{ right_ans }}</span></p>
 <p class="text-center">Сделали ошибок: <span class="badge" style='background-color:red;'>{{ wrong_ans }}</span></p>
