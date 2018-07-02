@@ -150,20 +150,24 @@ def pdddataAdd(request, pk):
             
             if pk_index == 24  and red_stars == 1:
                 report.add_data( 'exam',  24, 1 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             elif pk_index == 29  and red_stars == 2:
                 report.add_data( 'exam',  28, 2 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             # экзамен не сдан  
             elif pk_index < 20  and red_stars == 3:
                 print 'pk_index < 20 and red_stars == 3'
                 print 'stars.stars = ', stars.stars
                 report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             elif pk_index >= 20  and red_stars == 2:
                 print 'pk_index >= 20  and red_stars == 2'
                 print 'stars.stars = ', stars.stars
                 report.add_data( 'exam',  len( stars.stars ) - 3, 3 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             # добавление 5ти вопросов и продолжение экзамена
             elif(len(question_id_list) == 20 and red_stars == 1) or (len(question_id_list) == 25 and red_stars == 2):
@@ -183,12 +187,15 @@ def pdddataAdd(request, pk):
             # ответ правильный, экзамен сдан:
             if pk_index == 19  and red_stars == 0:
                 report.add_data( 'exam',  20, 0 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             elif pk_index == 24  and red_stars == 1:
                 report.add_data( 'exam',  24, 1 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             elif pk_index == 29  and red_stars == 2:
                 report.add_data( 'exam',  29, 2 )
+                timer.stop()
                 return redirect( '/tickets/exam_report' )
             # ответ правильный, экзамен продолжается:
             else:
@@ -481,7 +488,10 @@ class ExamReportView(PddContextMixin, TemplateView):
         context = super(ExamReportView, self).get_context_data(**kwargs)    
         stars = Stars(self.request)
         stars.clear()
+        timer = Timer(self.request)
         report = Report(self.request)
+        context['time_for_test'] = timer.get_timer_report()
+        context[ 'nav_tab' ] = self.request.session['nav_tab']
         context[ 'wrong_ans' ] = report.report[ 'exam' ][ 'wrong' ]
         context[ 'right_ans' ] = report.report[ 'exam' ][ 'right' ]
         return context
