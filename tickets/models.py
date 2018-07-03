@@ -7,6 +7,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_list_or_404
 from django.http import Http404
 
+# from django.core.exceptions import ValidationError
+# from django.utils.translation import gettext_lazy as _
+
+
 DRIVE_CATEGORY = (('A, B, M', 'A, B, M'), ('C и Д', 'C и Д'))
 QUESTION_NUMBER = ( 
     (1, '1',), (2, '2',), (3,'3',), (4, '4',), (5, '5',),
@@ -15,11 +19,14 @@ QUESTION_NUMBER = (
     (16, '16',), (17,'17',), (18, '18',), (19, '19',), (20, '20',),
 
 )
-# THEME_CATEGORY = (
-#     'Общие положения',
-#     "Общиеобязанности водителей",
-#     "Обязанности пассажиров",
-# )
+
+# def validate_question_number(question_number):
+#     ticket_questions = Question
+#     if value % 2 != 0:
+#         raise ValidationError(
+#             _('Вопрос с номером %(question_number)s уже есть в билете %(ticket_number)s'),
+#             params={'question_number': question_number, },
+#         )
 
 
 class Ticket(models.Model):
@@ -198,7 +205,7 @@ class Choice(models.Model):
         on_delete = models.CASCADE,
         )
     choice_text = models.CharField('Вариант ответа', max_length=1000)
-    choice_status = models.BooleanField('Правильный ответ', default = False)
+    choice_status = models.BooleanField('Правильный ответ',)
 
 
     def __unicode__(self):
