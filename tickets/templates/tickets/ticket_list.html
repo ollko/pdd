@@ -9,8 +9,8 @@
 		{% if ticket_item.first_question_num %}
 
 			<div class="col-md-3 col-sm-6 ">
-			<div class="bg-warning" >
-				<div class="text-center  tick-number-{{ ticket_item.ticket_num }}">
+			<div class="alert alert-warning" role="alert" >
+				<div class="text-center ticket tick-number-{{ ticket_item.tick_number }}">
 					<a href='{% url "tickets:question_detail"  ticket_item.first_question_num %}'>Билет № {{ ticket_item.tick_number }}</a>					
 				</div>
 				{% if ticket_item.right or ticket_item.wrong %}

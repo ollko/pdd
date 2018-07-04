@@ -9,15 +9,18 @@
 
 <br>
 	{% if nav_tab == 'marathon' %}
-	<div class='row'>
-		<a class="btn btn-primary my-suspend-timer-btn" data-url="{% url 'tickets:toggle_Timer' %}" href="#" role="button">Пауза</a>
-	</div>
-
+		<div class='row'>
+			<a class="btn btn-primary my-suspend-timer-btn" data-url="{% url 'tickets:toggle_Timer' %}" href="#" role="button">Пауза</a>
+		</div>
 	{% endif %}
-	<div class="row">
-	<div class="col-xs-6 text-center"><button type="button" class="btn btn-primary btn-xs">Билет №{{ question.ticket.id }}</button></div>
-	<div class="col-xs-6 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question_number }}</button></div>
-	</div>
+
+	{% if not nav_tab == 'exam' %}
+		<div class="row">
+		<div class="col-xs-6 text-center"><button type="button" class="btn btn-primary btn-xs">Билет №{{ question.ticket.id }}</button></div>
+		<div class="col-xs-6 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question_number }}</button></div>
+		</div>
+	{% endif %}
+	
 	<br>
 	<img class="img-responsive" src="{% if question.image %}{{ question.image.url }}{% else %}{% static 'img/question_without_img.png' %}{% endif %}">
 	<br>
@@ -35,10 +38,22 @@
 	   
 	    
 	{% endfor %}
-	<br>
-		<input class="btn btn-primary pdd-check-button" type="button" value="Проверить">		
-		<input type="submit" class="btn btn-primary pdd-next-button" style="display:none"  value="Дальше">
-		<input class="btn btn-warning" type="button" value="Подсказка">
+	<br><div class="row" >
+			<div class="col-xs-6 text-left">
+				<input class="btn btn-primary pdd-check-button" type="button" value="Проверить">		
+				<input type="submit" class="btn btn-primary pdd-next-button" style="display:none"  value="Дальше">
+			</div>
+			{% if not nav_tab == 'exam' and question.tip %}
+			<div class="col-xs-6 text-center">
+				<input id='tip-tog' class="btn btn-warning" type="button" value="Подсказка">
+			</div>
+			{% endif %}
+		</div>
+		<div class="row" style="margin-top: 20px;">
+			<div class="col-xs-12">
+				<div id="tip-content" class="alert alert-warning" role="alert">{{ question.tip|safe }}</div>
+			</div>
+		</div>	
 	</form>
 
 {% endblock content %}

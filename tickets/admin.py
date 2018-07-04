@@ -24,12 +24,14 @@ class QuestionAdmin(admin.ModelAdmin):
                     'ticket',                    
                     'question', 
                     'theme',
+                    # 'tip',
                     )
 
-    fields =   ('question_number',
-                'question', 
-                'ticket',
+    fields =   (('ticket','question_number', ),
                 'theme',
+                'question',
+                "image", 
+                'tip',
                 )
 
     inlines = [ChoiceItemInline]

@@ -14,6 +14,6 @@
   {% url 'tickets:errors' as errors %}
   <li role="presentation" {% if nav_tab == 'errors' or current_url == errors %}class="active"{% endif %}><a href="{% url 'tickets:errors' %}">Мои ошибки</a></li>
   <li role="presentation" class='hidden-xs'><a href="{% url 'tickets:pdddataClear'%}">Очистить историю</a></li>
-  <li role="presentation" class='hidden-xs'><a href="#">ПДД виджет</a></li>
+  <!-- <li role="presentation" class='hidden-xs'><a href="#">ПДД виджет</a></li> -->
 </ul>
 <!-- {{nav_tab}} -->

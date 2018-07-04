@@ -29,3 +29,12 @@ input[type="radio"]:checked + .pdd-label.wrong-ans.pdd-pass-question {
 .pdd-toggle-pointer-events, .pdd-passed-question{
   pointer-events: none;
 }
+
+#tip-content{
+  opacity: 0;
+  transition: 0.2s;
+}
+#tip-content.open{
+  transition-duration: 2s;
+  opacity: 1;
+}

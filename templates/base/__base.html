@@ -153,6 +153,12 @@
         console.log(errorThrown)
       }
     })
+// Подсказка
+  var $tipTog = $('#tip-tog');
+  var $tipContent = $('#tip-content')
+  $tipTog.click(function(){
+  $tipContent.toggleClass('open');
+  })
 })
 
   

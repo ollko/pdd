@@ -7,6 +7,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_list_or_404
 from django.http import Http404
 
+from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
+    
+
 # from django.core.exceptions import ValidationError
 # from django.utils.translation import gettext_lazy as _
 
@@ -102,9 +106,9 @@ class Theme(models.Model):
 
 
 class Question(models.Model):
-    question_number = models.IntegerField("№ вопроса", choices = QUESTION_NUMBER, default = 1 ) 
+    question_number = models.IntegerField("Вопрос №", choices = QUESTION_NUMBER, default = 1 ) 
     ticket = models.ForeignKey(Ticket,
-        verbose_name = '№ билета',
+        verbose_name = 'Билет №',
         related_name='questions',
         on_delete = models.CASCADE,
         )
@@ -116,6 +120,11 @@ class Question(models.Model):
     image = models.ImageField('Картинка', upload_to='tickets_img/',
                                 blank=True, null=True, default=None,)
     question = models.CharField('Вопрос', max_length = 1000,)
+
+
+
+    # tip = tinymce_models.HTMLField('Подсказка', blank=True, null=True, default = None)
+    tip = RichTextUploadingField('Подсказка', blank=True, null=True, default = None)
 
 
     class Meta:

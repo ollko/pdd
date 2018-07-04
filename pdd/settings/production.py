@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 'tinymce',
+    'ckeditor',
+    'ckeditor_uploader',
+
     'tickets',
 
 ]
@@ -136,6 +140,34 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/u64358/u64358.netangels.ru/www/static'
 STATIC_URL = '/static/'
 
+# CKEDITOR_CONFIGS = {
+#        'default': {
+#            'toolbar':[['Source', 'Link', 'Unlink', 'SpecialChar', 'Image', 'CodeSnippet']],
+#            'height': 400,
+#            'width': 900,
+#            'removePlugins': 'stylesheetparser',
+#            'extraPlugins': 'codesnippet',
+#        },
+#     }
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['Image'],
+            ['RemoveFormat', 'Source']
+
+        ]
+    }
+}
+CKEDITOR_BROWSE_SHOW_DIRS = True
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_JQUERY_URL = "https://code.jquery.com/jquery-3.1.1.min.js"
+
 
 STAR_SESSION_ID = 'stars'
 
@@ -144,3 +176,10 @@ REPORT_SESSION_ID = 'report'
 PDD_ERRORS_SESSION_ID = 'errors'
 
 TIMER_ID = 'timer'
+
+# TINYMCE_DEFAULT_CONFIG = {
+#     'plugins': "table,spellchecker,paste,searchreplace",
+#     'theme': "advanced",
+#     'cleanup_on_startup': True,
+#     'custom_undo_redo_levels': 10,
+# }
