@@ -6,25 +6,28 @@
 <br>
 
 	{% for ticket_item in tickets %}
-		{% if ticket_item.first_question_num %}
+	
+		{% if ticket_item.is_whole_ticket %}
+			<!-- {% if ticket_item.first_question_num %} -->
 
-			<div class="col-md-3 col-sm-6 ">
-			<div class="alert alert-warning" role="alert" >
-				<div class="text-center ticket tick-number-{{ ticket_item.tick_number }}">
-					<a href='{% url "tickets:question_detail"  ticket_item.first_question_num %}'>Билет № {{ ticket_item.tick_number }}</a>					
-				</div>
-				{% if ticket_item.right or ticket_item.wrong %}
-				<div>
-					<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket_item.right }}</span>
-					</small>
-				</div>
-				<div>
-					<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ ticket_item.wrong }}</span></small>
-				</div>
-				{% endif %}				
-			</div>				
+				<div class="col-md-3 col-sm-6 ">
+				<div class="alert alert-warning" role="alert" >
+					<div class="text-center ticket tick-number-{{ ticket_item.tick_number }}">
+						<a href='{% url "tickets:question_detail"  ticket_item.first_question_num %}'>Билет № {{ ticket_item.tick_number }}</a>					
+					</div>
+					{% if ticket_item.right or ticket_item.wrong %}
+					<div>
+						<small>Правильно:  <span class="badge" style="background-color:green; font-size:10px">{{ ticket_item.right }}</span>
+						</small>
+					</div>
+					<div>
+						<small>Не правильно:  <span class="badge" style="background-color:red; font-size:10px">{{ ticket_item.wrong }}</span></small>
+					</div>
+					{% endif %}				
+				</div>				
 
-			</div>
+				</div>
+			<!-- {% endif %} -->
 		{% endif %}
 	{% endfor %}
 

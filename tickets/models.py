@@ -65,6 +65,14 @@ class Ticket(models.Model):
             question_id_list.append( unicode(question.id) )
         return question_id_list
 
+    @property
+    def is_whole_ticket(self):
+        q = Question.objects.filter( ticket = self.id )
+        if len(q) == 20:
+            return True
+        else:
+            return False
+
 
 class Theme(models.Model):
     name = models.CharField('Тема', max_length = 500,)

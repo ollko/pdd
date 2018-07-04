@@ -31,6 +31,7 @@ class TicketListView(PddContextMixin, TemplateView):
             tick_item = report.get( 'ticket_' + str(ticket.id), {} )
             tick_item[ 'tick_number' ] = ticket.tick_number
             tick_item[ 'first_question_num' ] = ticket.get_first_question_num()
+            tick_item[ 'is_whole_ticket' ] = ticket.is_whole_ticket
 
             ticket_with_result.append(tick_item)
         context['tickets'] = ticket_with_result
@@ -482,9 +483,16 @@ class ExamTemplateView(PddContextMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ExamTemplateView, self).get_context_data(**kwargs)    
-        t = Ticket.objects.values_list( 'id', flat = True ).order_by( '?' ).first()
-        exam_question_id_list = Question.objects.filter( ticket = t ).values_list( 'id', flat = True ).order_by( '?' )
+        # t = Ticket.objects.filter( is_whole_ticket = True ).values_list( 'id', flat = True ).order_by( '?' ).first()
+        # exam_question_id_list = Question.objects.filter( ticket = t ).values_list( 'id', flat = True ).order_by( '?' )
         
+        q = Question.objects.all().order_by( '?' )[:20]
+        try:
+            q[19]
+        except IndexError:
+            raise Http404('В базе не достаточно билетов для проведения экзамена')
+        exam_question_id_list = q.values_list( 'id', flat = True )
+
         exam_question_list = []
         for item in exam_question_id_list:
             exam_question_list.append(item)
