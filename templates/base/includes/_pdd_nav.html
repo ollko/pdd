@@ -1,19 +1,34 @@
+<p class="text-center">
+  <a class="btn btn-default" role="button" href="{% url 'tickets:pdddataClear'%}"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Очистить историю</a>
+</p>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs nav-justified">
   {% url 'tickets:exam' as exam %}
-  <li role="presentation" {% if nav_tab == 'exam' or current_url == exam %}class="active"{% endif %} ><a href="{% url 'tickets:exam'%}">Экзамен</a></li>
+  <li role="presentation" class="{% if nav_tab == 'exam' or current_url == exam %}active{% else %}nav-none-active-tab{% endif %}">
+    <a class="pdd-nav" href="{% url 'tickets:exam'%}"><span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span> Экзамен</a>
+  </li>
   
   {% url 'tickets:ticket_list' as tickets %}
-  <li role="presentation"  {% if nav_tab == 'ticket' or current_url == tickets %}class="active"{% endif %}><a href="{% url 'tickets:ticket_list'%}">Билеты</a></li>
+  <li role="presentation"  class="{% if nav_tab == 'ticket' or current_url == tickets %}active{% else %}nav-none-active-tab{% endif %}">
+    <a href="{% url 'tickets:ticket_list'%}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Билеты</a>
+  </li>
 
   {% url 'tickets:theme_list' as theme %}
-  <li role="presentation" {% if nav_tab == 'theme' or current_url == theme %}class="active"{% endif %}><a href="{% url 'tickets:theme_list'%}">Темы</a></li>
+  <li role="presentation" class="{% if nav_tab == 'theme' or current_url == theme %}active{% else %}nav-none-active-tab{% endif %}">
+    <a href="{% url 'tickets:theme_list'%}"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Темы</a>
+  </li>
 
   {% url 'tickets:marathon' as marathon %}
-  <li role="presentation" {% if nav_tab == 'marathon' or current_url == marathon %}class="active"{% endif %}><a href="{% url 'tickets:marathon'%}">Марафон 800</a></li>
+  <li role="presentation" class="{% if nav_tab == 'marathon' or current_url == marathon %}active{% else %}nav-none-active-tab{% endif %}">
+    <a href="{% url 'tickets:marathon'%}"><span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Марафон 800</a>
+  </li>
+
   {% url 'tickets:errors' as errors %}
-  <li role="presentation" {% if nav_tab == 'errors' or current_url == errors %}class="active"{% endif %}><a href="{% url 'tickets:errors' %}">Мои ошибки</a></li>
-  <li role="presentation" class='hidden-xs'><a href="{% url 'tickets:pdddataClear'%}">Очистить историю</a></li>
+  <li role="presentation" class="{% if nav_tab == 'errors' or current_url == errors %}active{% else %}nav-none-active-tab{% endif %}">
+    <a href="{% url 'tickets:errors' %}"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Мои ошибки</a>
+  </li>
+
+  
   <!-- <li role="presentation" class='hidden-xs'><a href="#">ПДД виджет</a></li> -->
 </ul>
 <!-- {{nav_tab}} -->

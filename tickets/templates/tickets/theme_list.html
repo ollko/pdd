@@ -14,9 +14,9 @@
 	{% for theme_item in themes %}
 
 		{% if theme_item.first_question_num %}
-		<tr>
+		<tr class="theme-list-item" data-href="{% url 'tickets:question_detail' theme_item.first_question_num %}">
 			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.theme_name }}</a></td>
-			<td>{{ theme_item.ticket_number }}</td>
+			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.ticket_number }}</a></td>
 			{% if theme_item.right or theme_item.wrong %}
 			<td>
 				<div>
@@ -28,7 +28,7 @@
 				</div>
 			</td>
 				{% else %}
-			<td>Не пройдено</td>	
+			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">Не пройдено</a></td>	
 				{% endif %}	
 			
 		</tr>

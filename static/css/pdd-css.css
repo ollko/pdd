@@ -38,3 +38,70 @@ input[type="radio"]:checked + .pdd-label.wrong-ans.pdd-pass-question {
   transition-duration: 2s;
   opacity: 1;
 }
+/*блок меню*/
+.block-pdd-nav{
+  margin: 0 5px;
+}
+
+.nav-none-active-tab{
+  
+  
+}
+.nav-none-active-tab a{
+  background-color: #d1deea;
+  /*color: white;*/
+}
+
+.pdd-field{
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  border-top: none;
+}
+.block-pdd-nav a{
+  margin: 0 1px;
+}
+/*блок билеты*/
+.ticket-item{
+  margin: 0 -15px;
+  padding: .5em;
+  background-color: #fafad2;
+  border: 1px solid #ddd;
+}
+
+
+
+
+
+.ticket-item a{
+ text-decoration: none;
+}
+
+.ticket-item:hover{
+  background-color: #f3f3b2;
+  border: 1px solid #b5b5b5;
+}
+.ticket-list-row{
+  margin: 0 -5px;
+  
+}
+
+/*Для клика на row темы для прохождения вопросов из темы*/
+tr.theme-list-item[data-href]{
+  cursor: pointer;
+}
+tr.theme-list-item[data-href]:hover{
+  background-color: #f3f3b2;
+  border: 1px solid #b5b5b5;
+}
+
+tr.theme-list-item td a {
+  display:inline-block;
+  min-height:100%;
+  width:100%;
+  padding: 5px;
+  text-decoration: none; 
+}
+tr.theme-list-item td {
+  padding:0;  
+}
