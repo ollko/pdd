@@ -6,16 +6,15 @@
 {% endblock progressbar %}
 
 {% block content %}
+<div id='minutes' class="hidden">{{ minutes }}</div>
+<div id='seconds' class="hidden">{{ seconds }}</div>
 
-<br>
 	{% if nav_tab == 'marathon' %}
+		
+<form  action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
 		<div class="text-center">
-	      <span id="min">00</span>:<span id="sec">00</span>
-		</div>
-
-		<div class="text-center">
-		<input id="countup-min" class="countup" type="text" value="00"> :
-		<input id="countup-sec" class="countup" type="text" value="00">
+		<input id="countup-min" class="countup" name='countup-min' type="text" value="{{ minutes }}"> :
+		<input id="countup-sec" class="countup" name='countup-sec' type="text" value="{{ seconds }}">
 	      
 		</div>
 		
@@ -45,7 +44,7 @@
 	<p class="text-center"><strong>{{ question.question }}</strong></p>
 
 
-	<form  action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
+	
 	{% csrf_token %}
 	{% for choice in question.choice_set.all %}
 	<div class="pdd-question-answer-block">

@@ -71,6 +71,7 @@ class QuestionDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(*args, **kwargs)
         stars = Stars( self.request )
+        timer = Timer( self.request)
         context['stars'] = stars.stars
         nav_tab = self.request.session.get('nav_tab')
         context['nav_tab'] = nav_tab
@@ -82,6 +83,8 @@ class QuestionDetailView(DetailView):
             star_num = self.request.session['grey_stars']
         n = star_num - len(stars.stars)  
         context['grey_stars'] = [None for i in range(n)]
+        context['minutes'] = timer.timer.get('current_timer_min', '00')
+        context['seconds'] = timer.timer.get('current_timer_sec', '00')
         return context
 
 
@@ -224,7 +227,9 @@ def pdddataAdd(request, pk):
         question_id_list = question.get_question_id_list_in_theme()
     elif nav_tab == 'marathon':
         question_id_list = request.session['marathon_list']
-    
+        timer.timer['current_timer_min'] = request.POST['countup-min']
+        timer.timer['current_timer_sec'] = request.POST['countup-sec']
+
     elif nav_tab == 'errors':
         errors_list = request.session['errors_list']
         try:
