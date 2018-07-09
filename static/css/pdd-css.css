@@ -105,3 +105,10 @@ tr.theme-list-item td a {
 tr.theme-list-item td {
   padding:0;  
 }
+/* Count up timer */
+input.countup{
+  width: 1.5em;
+  border: none;
+  border-style: none;
+  text-align: center;
+}

@@ -9,15 +9,38 @@
 
 <br>
 	{% if nav_tab == 'marathon' %}
-		<div class='row'>
-			<a class="btn btn-primary my-suspend-timer-btn" data-url="{% url 'tickets:toggle_Timer' %}" href="#" role="button">Пауза</a>
+		<div class="text-center">
+	      <span id="min">00</span>:<span id="sec">00</span>
+		</div>
+		<div class="text-center">
+			<input id="startButton" type="button" value="Start">
+			<input id="pauseButton" type="button" value="Pause">
+			<input id="resumeButton" type="button" value="Resume">
+	    </div>
+		<div class="text-center">
+		<input id="countup-min" class="countup" type="text" value="00"> :
+		<input id="countup-sec" class="countup" type="text" value="00">
+	      
 		</div>
 	{% endif %}
+	<br>
 
 	{% if not nav_tab == 'exam' %}
 		<div class="row">
-		<div class="col-xs-6 text-center"><button type="button" class="btn btn-primary btn-xs">Билет №{{ question.ticket.id }}</button></div>
-		<div class="col-xs-6 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question_number }}</button></div>
+		<div class="col-xs-4 text-center"><button type="button" class="btn btn-primary btn-xs">Билет №{{ question.ticket.id }}</button></div>
+
+		{% if nav_tab == 'marathon' %}
+			{% comment %}
+			<div class="col-xs-4 text-center">
+				<input id="startButton" type="hidden" value="Продолжить">
+				<input id="pauseButton" type="button" value="Пауза">
+			</div>
+			{% endcomment %}
+			
+		{% endif %}
+
+
+		<div class="col-xs-4 text-center"><button type="button" class="btn btn-info btn-xs">Вопрос №{{ question.question_number }}</button></div>
 		</div>
 	{% endif %}
 	

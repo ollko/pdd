@@ -117,15 +117,13 @@ class Timer(object):
         if not timer:
             # Сохраняем объект данных пользователя в сессию
             timer = self.session[settings.TIMER_ID] = { 
-                'start' : self.seconds_since_midnight(),
-                'suspend' : False,
-                'sleep_time': 0,
-
-
+                # 'start' : self.seconds_since_midnight(),
+                # 'suspend' : False,
+                # 'sleep_time': 0,
 
                 }
         self.timer = timer
-        # print "self.timer['sleep_time']=",self.timer['sleep_time']
+
 
     def seconds_since_midnight(self):
         now = datetime.now()
