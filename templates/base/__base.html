@@ -106,6 +106,8 @@ var Clock = {
       
       $("#min").text(pad(Math.floor(self.totalSeconds / 60 % 60)));
       $("#sec").text(pad(parseInt(self.totalSeconds % 60)));
+      $('input#countup-min').attr('value', pad(Math.floor(self.totalSeconds / 60 % 60)));
+      $('input#countup-sec').attr('value', pad(parseInt(self.totalSeconds % 60)));
     }, 1000);
   },
   
