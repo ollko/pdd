@@ -113,12 +113,14 @@ var Clock = {
     delete this.interval;
     $('input#pauseButton').attr('type', 'hidden');
     $('input#resumeButton').attr('type', 'button');
+    $(".pdd-ticket-input").toggleClass('pdd-toggle-pointer-events');
   },
 
   resume: function () {
     if (!this.interval) this.start();
     $('input#resumeButton').attr('type', 'hidden');
     $('input#pauseButton').attr('type', 'button');
+    $(".pdd-ticket-input").toggleClass('pdd-toggle-pointer-events');
   },
   
   
