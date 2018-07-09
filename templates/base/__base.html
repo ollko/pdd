@@ -113,10 +113,14 @@ var Clock = {
   pause: function () {
     clearInterval(this.interval);
     delete this.interval;
+    $('input#pauseButton').attr('type', 'hidden');
+    $('input#resumeButton').attr('type', 'button');
   },
 
   resume: function () {
     if (!this.interval) this.start();
+    $('input#resumeButton').attr('type', 'hidden');
+    $('input#pauseButton').attr('type', 'button');
   },
   
   

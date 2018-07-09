@@ -12,16 +12,13 @@
 		<div class="text-center">
 	      <span id="min">00</span>:<span id="sec">00</span>
 		</div>
-		<div class="text-center">
-			<!-- <input id="startButton" type="button" value="Start"> -->
-			<input id="pauseButton" type="button" value="Pause">
-			<input id="resumeButton" type="button" value="Resume">
-	    </div>
+
 		<div class="text-center">
 		<input id="countup-min" class="countup" type="text" value="00"> :
 		<input id="countup-sec" class="countup" type="text" value="00">
 	      
 		</div>
+		
 	{% endif %}
 	<br>
 
@@ -36,7 +33,10 @@
 				<input id="pauseButton" type="button" value="Пауза">
 			</div>
 			{% endcomment %}
-			
+			<div class="col-xs-4 text-center">
+				<input id="pauseButton" type="button" value="Пауза">
+				<input id="resumeButton" type="hidden" value="Продолжить">
+			</div>
 		{% endif %}
 
 
