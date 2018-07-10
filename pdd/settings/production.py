@@ -140,6 +140,11 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/u64358/u64358.netangels.ru/www/static'
 STATIC_URL = '/static/'
 
+CKEDITOR_CONFIGS = {
+       'default': {
+           'toolbar' : None,
+       },
+    }
 # CKEDITOR_CONFIGS = {
 #        'default': {
 #            'toolbar':[['Source', 'Link', 'Unlink', 'SpecialChar', 'Image', 'CodeSnippet']],
@@ -149,19 +154,8 @@ STATIC_URL = '/static/'
 #            'extraPlugins': 'codesnippet',
 #        },
 #     }
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink'],
-            ['Image'],
-            ['RemoveFormat', 'Source']
 
-        ]
-    }
-}
+
 CKEDITOR_BROWSE_SHOW_DIRS = True
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
