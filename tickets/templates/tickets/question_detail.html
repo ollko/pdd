@@ -9,7 +9,7 @@
 <div id='minutes' class="hidden">{{ minutes }}</div>
 <div id='seconds' class="hidden">{{ seconds }}</div>
 
-	{% if nav_tab == 'marathon' %}
+	{% if nav_tab == 'marathon' or nav_tab == 'exam' %}
 		
 <form  action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
 		<div class="text-center">
