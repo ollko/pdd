@@ -12,10 +12,9 @@
 	{% if nav_tab == 'marathon' or nav_tab == 'exam' %}
 		
 <form  action="{% url 'tickets:pdddataAdd' question.id %}" method="post">
-		<div class="text-center">
-		<input id="countup-min" class="countup" name='countup-min' type="text" value="{{ minutes }}"> :
-		<input id="countup-sec" class="countup" name='countup-sec' type="text" value="{{ seconds }}">
-	      
+		<div class="text-center countup">
+			<input id="countup-min" class="countup" name='countup-min' type="text" value="{{ minutes }}"> :
+			<input id="countup-sec" class="countup" name='countup-sec' type="text" value="{{ seconds }}">      
 		</div>
 		
 	{% endif %}

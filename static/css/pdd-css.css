@@ -111,4 +111,9 @@ input.countup{
   border: none;
   border-style: none;
   text-align: center;
+  pointer-events: none;
+}
+div.countup{
+  font-size: 1.5em;
+  font-weight: 500;
 }
