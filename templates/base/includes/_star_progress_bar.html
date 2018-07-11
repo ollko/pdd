@@ -1,7 +1,7 @@
 <div class="row">
 <br>
 
-	<div style="width: 500px; margin-left: auto; margin-right:auto; color: #cccccc; font-size: 1.4em;">
+	<div class="star-line {% if nav_tab == 'theme' or nav_tab == 'marathon'%} star-line-marathon-theme-error{% endif %}" >
 	{% for star in stars %}		
 		<span class="glyphicon glyphicon-star" aria-hidden="true" style="color:{{ star }}"></span>
 	{% endfor %}

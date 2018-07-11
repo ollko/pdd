@@ -116,8 +116,19 @@ var Clock = {
           $(".pdd-label").each(function(){
             $(this).addClass( "pdd-pass-question" )
           });
+
+          // Показать подсказку если ответ не правильный
+          
+          if ($('#tip-content').text() !== 'None') {
+            if ( $('input[name="choice"]:checked') !== $("input.right-ans") ){
+                    $tipContent.addClass('open');
+            };
+          };
+          
+
           $(".pdd-check-button").css( "display", "none" );
           $(".pdd-next-button").css( "display", "inline-block" );
+
 
       // Окраска серых звездочек зеленый/красный
           var checkedInput = $('.pdd-ticket-input:checked');
@@ -128,6 +139,11 @@ var Clock = {
           }
           else {
             firstGreyStar.attr('style', 'color: red' )
+            // Выпадаэщее сообщение о добавлении 5 доп вопросов на экзамене
+            if ( $('.active').find('a').text() === ' Экзамен' &&
+              $('.star-line').find('span.glyphicon.glyphicon-star').length < 30 )
+             { alert('Вы допустили ошибку, вам будет добавлено 5 дополнительных вопросов.');
+            }        
           }
         }
       })
@@ -143,6 +159,7 @@ var Clock = {
   $tipTog.click(function(){
   $tipContent.toggleClass('open');
   })
+
 
 // Для клика на row темы для прохождения вопросов из темы
 

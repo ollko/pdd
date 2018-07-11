@@ -6,7 +6,7 @@
 	<thead>
 		<tr>
 			<th>Тема</th>
-			<th>Вопросы</th>
+			<th class='hidden-xs'>Вопросы</th>
 			<th>Результат</th>
 		</tr>
 	</thead>
@@ -16,7 +16,7 @@
 		{% if theme_item.first_question_num %}
 		<tr class="theme-list-item" data-href="{% url 'tickets:question_detail' theme_item.first_question_num %}">
 			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.theme_name }}</a></td>
-			<td><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.ticket_number }}</a></td>
+			<td class='hidden-xs'><a href="{% url 'tickets:question_detail' theme_item.first_question_num %}">{{ theme_item.ticket_number }}</a></td>
 			{% if theme_item.right or theme_item.wrong %}
 			<td>
 				<div>
