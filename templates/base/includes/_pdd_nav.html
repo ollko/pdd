@@ -5,7 +5,7 @@
 <ul class="nav nav-tabs nav-justified">
   {% url 'tickets:exam' as exam %}
   <li role="presentation" class="{% if nav_tab == 'exam' or current_url == exam %}active{% else %}nav-none-active-tab{% endif %}">
-    <a class="pdd-nav" href="{% url 'tickets:exam'%}"><span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span> Экзамен</a>
+    <a class="pdd-nav" href="{% url 'tickets:exam'%}" style="padding-left: 13px; padding-right: 12px;"><span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span> Экзамен</a>
   </li>
   
   {% url 'tickets:ticket_list' as tickets %}
@@ -15,12 +15,12 @@
 
   {% url 'tickets:theme_list' as theme %}
   <li role="presentation" class="{% if nav_tab == 'theme' or current_url == theme %}active{% else %}nav-none-active-tab{% endif %}">
-    <a href="{% url 'tickets:theme_list'%}"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Темы</a>
+    <a href="{% url 'tickets:theme_list'%}" style="padding-left: 18px; padding-right: 17px;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Темы</a>
   </li>
 
   {% url 'tickets:marathon' as marathon %}
   <li role="presentation" class="{% if nav_tab == 'marathon' or current_url == marathon %}active{% else %}nav-none-active-tab{% endif %}">
-    <a href="{% url 'tickets:marathon'%}"><span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Марафон 800</a>
+    <a href="{% url 'tickets:marathon'%}" style="padding-left: 7px; padding-right: 7px;"><span class="glyphicon glyphicon-plane" aria-hidden="true"></span> Марафон 800</a>
   </li>
 
   {% url 'tickets:errors' as errors %}

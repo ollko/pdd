@@ -1,21 +1,14 @@
 {% load static %}
 
 <hr>
-	<div class="row">
-	<p class="text-center"><strong>Вопрос: {{ item.question_text }}</strong></p>
+	
+	<p class="text-center" style="font-size: 1.14em;"><strong>Вопрос: {{ item.question_text }}</strong></p>
 <hr>
 	<img class="img-responsive" src="{% if item.question_img %}{{ item.question_img }}{% else %}{% static 'img/question_without_img.png' %}{% endif %}">
 
 	
 	<table class="table">
 	<tbody>
-	{% comment %}
-		<thead>
-			<tr>
-				<th colspan="2" class="text-center">Вопрос: {{ item.question_text }}</th>
-			</tr>
-		</thead>
-	{% endcomment %}
 		<tr>
 			<th>Ваш ответ:</th>
 			<td class="text-danger">{{ item.wrong_text }}</td>
@@ -24,13 +17,13 @@
 			<th>Правильный ответ:</th>
 			<td class="text-success">{{ item.right_text }}</td>
 		</tr>
+		{% if item.tip %}
 		<tr>
 			<th>Подсказка:</th>
-			<td></td>
+			<td>{{ item.tip|safe }}</td>
 		</tr>
-	
+		{% endif %}
 	</tbody>
 
 	</table>
 
-</div>

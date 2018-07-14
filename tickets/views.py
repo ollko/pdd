@@ -330,6 +330,7 @@ class TicketReportView(TemplateView):
             question = Question.objects.get( pk = item )
             errors.errors[ item ][ 'question_id' ] = question.id
             errors.errors[ item ][ 'question_text' ] = question.question
+            errors.errors[ item ][ 'tip' ] = question.tip
             if question.image:
                 errors.errors[ item ][ 'question_img' ] = question.image.url
             data.append( errors.errors[ item ] )
@@ -372,6 +373,7 @@ class ThemeReportView(TemplateView):
             question = Question.objects.get( pk = item )
             errors.errors[ item ][ 'question_id' ] = question.id
             errors.errors[ item ][ 'question_text' ] = question.question
+            errors.errors[ item ][ 'tip' ] = question.tip
             if question.image:
                 errors.errors[ item ][ 'question_img' ] = question.image.url
             data.append( errors.errors[ item ] )       
